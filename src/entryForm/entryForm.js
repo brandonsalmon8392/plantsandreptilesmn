@@ -11,6 +11,7 @@ class entryForm extends Component {
         countyClicked: false,
         clickedCounty: null,
         clickedCountyData: null,
+        currentData: null,
         species: null,
         description: null,
         link: null,
@@ -44,7 +45,13 @@ class entryForm extends Component {
             this.setState({
                 countyClicked: true,
                 clickedCounty: event.target,
-                clickedCountyData: event.target._dataItem._dataContext
+                clickedCountyData: event.target._dataItem._dataContext,
+                currentData: null,
+                species: null,
+                description: null,
+                link: null,
+                image: null
+
             });
             this.state.clickedCounty.color = am4core.color("#367B25");
             console.log(event.target)
@@ -57,6 +64,7 @@ class entryForm extends Component {
 
     handleDescriptionChange = (event) => {
         this.setState({description: event.target.value})
+        console.log(this.state.description)
     }
 
     handleLinkChange = (event) => {
@@ -69,18 +77,78 @@ class entryForm extends Component {
 
     postNewData = () => {
         let data = {
+            countyID: this.state.clickedCountyData.name,
+            countyData:
+        {
             species: this.state.species,
             description: this.state.description,
             link: this.state.link,
             image: this.state.image
+            }
         };
         axios.post('https://reptile-mn.firebaseio.com/counties.json', data);
     };
+
+    editPost(data) {
+        this.setState({
+            species: data.species,
+            description: data.description,
+            link: data.link,
+            image: data.image
+        })
+    }
+
+    removePost() {
+
+    }
+
+    retrieveCountyData() {
+        axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
+            let dataArray = Object.entries(response.data);
+            console.log(dataArray);
+            let renderData = null;
+            let foundData = false;
+            renderData = dataArray.map(element => {
+                console.log(element[1].countyID)
+                if(element[1].countyID) {
+                    if (element[1].countyID === this.state.clickedCountyData.name) {
+                        console.log(element[1].countyData.species);
+                        foundData = true;
+                        let data = {
+                            species: element[1].countyData.species,
+                            description: element[1].countyData.description,
+                            link: element[1].countyData.link,
+                            image: element[1].countyData.image
+                        };
+                        return (
+                            <div style={{border: "2px solid #74B266"}}>
+                                <p>{element[1].countyData.species}</p>
+                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p>
+                                <a href={element[1].countyData.link}>More Info</a><br/>
+                                <img src={element[1].countyData.image} placeholder="Image"/>
+                                <button onClick= {() => {this.editPost(data)}}>Edit</button>
+                            </div>);
+                    }
+                }
+            });
+            if(foundData) {
+                this.setState({currentData: renderData});
+            }
+
+        })
+    }
 
     render() {
         let county = <h1>Enter data for: Select a county</h1>;
         if(this.state.countyClicked) {
             county = <h1>Enter data for: {this.state.clickedCountyData.name}</h1>
+            this.retrieveCountyData();
+
+        }
+        let data = <p>No data here yet!</p>
+
+        if(this.state.currentData) {
+            data = this.state.currentData
         }
         return (
             <div className="App-header text-color">
@@ -93,17 +161,24 @@ class entryForm extends Component {
                     <div className="right-half">
                         <article>
                             {county}
+                            <div className="left-half">
                             <form>
                                 <label>Species:</label>
-                                <input type="text" placeholder="Species Name" onChange={this.handleSpeciesChange}/><br/>
+                                <input type="text" placeholder="Species Name" onChange={this.handleSpeciesChange} value={this.state.species}/><br/>
                                 <label>Description:</label>
-                                <textarea placeholder="Description" onChange={this.handleDescriptionChange}/><br/>
+                                <textarea placeholder="Description" onChange={this.handleDescriptionChange} value={this.state.description}/><br/>
                                 <label>Link: </label>
-                                <input type="text" placeholder="Link to more info" onChange={this.handleLinkChange}/><br/>
+                                <input type="text" placeholder="Link to more info" onChange={this.handleLinkChange} value={this.state.link}/><br/>
                                 <label>Image: </label>
-                                <input type="text" placeholder="Image URL" onChange={this.handleImageChange}/><br/>
+                                <input type="text" placeholder="Image URL" onChange={this.handleImageChange} value={this.state.image}/><br/>
+                                <img src={this.state.image} style={{width: "300px", height: "200px"}} alt="Preview"/>
                             </form>
                             <button onClick={this.postNewData}>Submit</button>
+                            </div>
+                        </article>
+                        <article className="right-half" style={{height: "600px"}}>
+                            <label className="text-color">Current Data:</label>
+                            {data}
                         </article>
                     </div>
                 </div>

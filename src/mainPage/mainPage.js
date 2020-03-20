@@ -5,6 +5,7 @@ import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/regio
 import Wrapper from "../hoc/Wrapper";
 import classes from "./mainPage.css";
 import {} from 'react-router';
+import axios from "../axios-database";
 
 
 class mainPage extends Component {
@@ -12,7 +13,8 @@ class mainPage extends Component {
         map: null,
         countyClicked: false,
         clickedCounty: null,
-        clickedCountyData: null
+        clickedCountyData: null,
+        countyData: null
     }
 
     componentDidMount() {
@@ -42,10 +44,10 @@ class mainPage extends Component {
             this.setState({
                 countyClicked: true,
                 clickedCounty: event.target,
-                clickedCountyData: event.target._dataItem._dataContext
+                clickedCountyData: event.target._dataItem._dataContext,
+                countyData: null
             });
             this.state.clickedCounty.color = am4core.color("#367B25");
-            console.log(event.target)
         })
 
     }
@@ -54,26 +56,61 @@ class mainPage extends Component {
         this.state.map.validate();
     }
 
+    retrieveCountyData() {
+        axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
+            let dataArray = Object.entries(response.data);
+            console.log(dataArray);
+            let renderData = null;
+            let foundData = false;
+             renderData = dataArray.map(element => {
+                console.log(element[1].countyID)
+                if(element[1].countyID) {
+                    if (element[1].countyID === this.state.clickedCountyData.name) {
+                            console.log(element[1].countyData.species);
+                            foundData = true;
+                        return (
+                            <div style={{border: "2px solid #74B266"}}>
+                                <p>{element[1].countyData.species}</p>
+                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p>
+                                <a href={element[1].countyData.link}>More Info</a><br/>
+                                <img src={element[1].countyData.image} placeholder="Image"/>
+                            </div>);
+                    }
+                }
+            });
+             if(foundData) {
+                 this.setState({countyData: renderData});
+             }
+
+        })
+    }
+
+
 
     render() {
         let county = <h2 className="County">Select a county to see it's native species!</h2>;
         if (this.state.countyClicked) {
+            this.retrieveCountyData();
+            let data = this.state.countyData;
+            console.log(this.state.countyData)
+            if(!data) {
+                data = (<div>
+                    <p>No data here yet!</p>
+                </div>);
+            }
+
             county = (
                 <Wrapper className={classes.County}>
                     <h2 className="County">{this.state.clickedCountyData.name} County</h2>
-                    <p>Plants:</p>
-                    <p>Trees:</p>
-                    <p>Turtles:</p>
-                    <p>Lizards:</p>
-                    <p>Salamanders:</p>
-                    <p>Snakes:</p>
+                    {data}
                 </Wrapper>
             );
         }
 
         return (
             <div className="App-header">
-                <h2 style={{margin: "0 auto", color: "#74B266", marginBottom:"34px"}}>Native Plants and Reptiles MN</h2>
+                <h1 style={{margin: "0 auto", color: "#74B266", marginBottom: "34px"}}>Native Plants and Reptiles
+                    MN</h1>
 
                 <div id="container">
                     <div className="left-half">
@@ -91,4 +128,5 @@ class mainPage extends Component {
         );
     }
 }
+
 export default mainPage;

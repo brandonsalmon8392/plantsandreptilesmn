@@ -1,22 +1,15 @@
-.App {
-  text-align: center;
+p {
+  margin-top: 0;
+  margin-bottom: 5px;
 }
 
-#container {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
+.App {
+  text-align: center;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
 }
 
 .App-header {
@@ -26,6 +19,16 @@
   flex-direction: column;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+#container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
 }
 
 .left-half {
@@ -38,10 +41,7 @@
   width: 50%;
   overflow: scroll;
   align-items: center;
-}
-
-.App-link {
-  color: #61dafb;
+  height: 600px;
 }
 
 .County {
@@ -52,9 +52,13 @@
   animation-duration: 2s;
 }
 
+.Description {
+  font-size: 12px;
+}
+
 @keyframes County-Clicked {
   from {
-    right: 100%
+    right: -100px
   }
   to {
     left: 50%;
