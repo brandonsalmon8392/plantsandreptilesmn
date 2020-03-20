@@ -12,6 +12,8 @@ class entryForm extends Component {
         clickedCounty: null,
         clickedCountyData: null,
         currentData: null,
+        dataRendered: false,
+        elementID: null,
         species: null,
         description: null,
         link: null,
@@ -34,30 +36,30 @@ class entryForm extends Component {
         polygonTemplate.fill = am4core.color("#74B266");
         let hs = polygonTemplate.states.create("hover");
         hs.properties.fill = am4core.color("#367B25");
+
         polygonTemplate.tooltipText = "{name} County";
         this.setState({map: map});
 
         polygonSeries.mapPolygons.template.events.on("hit", (event) => {
-            if (this.state.clickedCounty != null) {
-                this.state.clickedCounty.color = am4core.color("#74B266")
-            }
-
+            console.log(event.target.properties.fill)
+            event.target.properties.fill = am4core.color("#367B25");
+            console.log(event.target.properties.fill)
             this.setState({
                 countyClicked: true,
                 clickedCounty: event.target,
                 clickedCountyData: event.target._dataItem._dataContext,
                 currentData: null,
+                dataRendered: false,
                 species: null,
                 description: null,
                 link: null,
                 image: null
-
             });
-            this.state.clickedCounty.color = am4core.color("#367B25");
             console.log(event.target)
         })
 
     }
+
     handleSpeciesChange = (event) => {
         this.setState({species: event.target.value})
     }
@@ -75,31 +77,55 @@ class entryForm extends Component {
         this.setState({image: event.target.value})
     }
 
-    postNewData = () => {
-        let data = {
-            countyID: this.state.clickedCountyData.name,
-            countyData:
-        {
-            species: this.state.species,
-            description: this.state.description,
-            link: this.state.link,
-            image: this.state.image
-            }
-        };
-        axios.post('https://reptile-mn.firebaseio.com/counties.json', data);
+    postNewData = (data) => {
+        if(data.elementID) {
+            let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
+            dataurl += data.elementID;
+            axios.put(dataurl, {
+                countyData: {
+                    species: data.species,
+                    description: data.description,
+                    link: data.link,
+                    image: data.image
+                }
+            })
+        }
+        else {
+            let newData = {
+                countyID: this.state.clickedCountyData.name,
+                countyData:
+                    {
+                        species: this.state.species,
+                        description: this.state.description,
+                        link: this.state.link,
+                        image: this.state.image
+                    }
+            };
+            axios.post('https://reptile-mn.firebaseio.com/counties.json', newData);
+        }
     };
 
     editPost(data) {
         this.setState({
+            elementID: data.elementID,
             species: data.species,
             description: data.description,
             link: data.link,
             image: data.image
-        })
+        });
     }
 
-    removePost() {
-
+    removePost = (data) => {
+        if(window.confirm("Are you sure?")) {
+            console.log("Post Deleted");
+            let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
+            dataurl += data.elementID;
+            console.log(dataurl)
+            axios.delete(dataurl, {params: {id: data.elementID}})
+        }
+        else {
+            return
+        }
     }
 
     retrieveCountyData() {
@@ -109,12 +135,12 @@ class entryForm extends Component {
             let renderData = null;
             let foundData = false;
             renderData = dataArray.map(element => {
-                console.log(element[1].countyID)
                 if(element[1].countyID) {
                     if (element[1].countyID === this.state.clickedCountyData.name) {
                         console.log(element[1].countyData.species);
                         foundData = true;
                         let data = {
+                            elementID: element[0],
                             species: element[1].countyData.species,
                             description: element[1].countyData.description,
                             link: element[1].countyData.link,
@@ -127,12 +153,13 @@ class entryForm extends Component {
                                 <a href={element[1].countyData.link}>More Info</a><br/>
                                 <img src={element[1].countyData.image} placeholder="Image"/>
                                 <button onClick= {() => {this.editPost(data)}}>Edit</button>
+                                <button onClick={() => {this.removePost(data)}}>Delete</button>
                             </div>);
                     }
                 }
             });
             if(foundData) {
-                this.setState({currentData: renderData});
+                this.setState({currentData: renderData, dataRendered: true});
             }
 
         })
@@ -171,7 +198,7 @@ class entryForm extends Component {
                                 <input type="text" placeholder="Link to more info" onChange={this.handleLinkChange} value={this.state.link}/><br/>
                                 <label>Image: </label>
                                 <input type="text" placeholder="Image URL" onChange={this.handleImageChange} value={this.state.image}/><br/>
-                                <img src={this.state.image} style={{width: "300px", height: "200px"}} alt="Preview"/>
+                                <img src={this.state.image} alt="Preview"/>
                             </form>
                             <button onClick={this.postNewData}>Submit</button>
                             </div>

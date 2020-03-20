@@ -14,7 +14,8 @@ class mainPage extends Component {
         countyClicked: false,
         clickedCounty: null,
         clickedCountyData: null,
-        countyData: null
+        countyData: null,
+        dataRendered: false
     }
 
     componentDidMount() {
@@ -45,7 +46,8 @@ class mainPage extends Component {
                 countyClicked: true,
                 clickedCounty: event.target,
                 clickedCountyData: event.target._dataItem._dataContext,
-                countyData: null
+                countyData: null,
+                dataRendered: false
             });
             this.state.clickedCounty.color = am4core.color("#367B25");
         })
@@ -54,6 +56,15 @@ class mainPage extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         this.state.map.validate();
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        if(this.state.dataRendered) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     retrieveCountyData() {
@@ -66,7 +77,6 @@ class mainPage extends Component {
                 console.log(element[1].countyID)
                 if(element[1].countyID) {
                     if (element[1].countyID === this.state.clickedCountyData.name) {
-                            console.log(element[1].countyData.species);
                             foundData = true;
                         return (
                             <div style={{border: "2px solid #74B266"}}>
@@ -79,7 +89,7 @@ class mainPage extends Component {
                 }
             });
              if(foundData) {
-                 this.setState({countyData: renderData});
+                 this.setState({countyData: renderData, dataRendered: true});
              }
 
         })

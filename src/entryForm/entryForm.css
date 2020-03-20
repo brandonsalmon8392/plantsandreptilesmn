@@ -22,6 +22,11 @@ textarea {
     height: 100px;
 }
 
+img {
+    width: 250px;
+    height: 200px;
+}
+
 .text-color {
     color: #74B266;
 }
