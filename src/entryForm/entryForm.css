@@ -45,3 +45,24 @@ img {
 .App-link {
     color: #61dafb;
 }
+
+.Button {
+    border: none;
+    color: white;
+    outline: none;
+    cursor: pointer;
+    font: inherit;
+    padding: 5px;
+    margin: 10px;
+    font-weight: bold;
+}
+
+.Success {
+    background-color: #367B25;
+    color: white;
+}
+
+.Danger {
+    background-color: #bb1b15;
+    color: white;
+}

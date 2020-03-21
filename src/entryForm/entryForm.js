@@ -4,6 +4,7 @@ import './entryForm.css'
 import classes from './entryForm.css'
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
+import Button from "react-bootstrap/Button";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 class entryForm extends Component {
     state = {
@@ -118,10 +119,9 @@ class entryForm extends Component {
     removePost = (data) => {
         if(window.confirm("Are you sure?")) {
             console.log("Post Deleted");
-            let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
-            dataurl += data.elementID;
-            console.log(dataurl)
-            axios.delete(dataurl, {params: {id: data.elementID}})
+            let dataurl = 'https://reptile-mn.firebaseio.com/counties/' + data.elementID;
+            console.log(dataurl);
+            axios.delete(dataurl);
         }
         else {
             return
@@ -152,8 +152,8 @@ class entryForm extends Component {
                                 <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p>
                                 <a href={element[1].countyData.link}>More Info</a><br/>
                                 <img src={element[1].countyData.image} placeholder="Image"/>
-                                <button onClick= {() => {this.editPost(data)}}>Edit</button>
-                                <button onClick={() => {this.removePost(data)}}>Delete</button>
+                                <Button variant="success" onClick= {() => {this.editPost(data)}}>Edit</Button>
+                                <Button variant="danger" onClick={() => {this.removePost(data)}}>Delete</Button>
                             </div>);
                     }
                 }
@@ -170,13 +170,13 @@ class entryForm extends Component {
         if(this.state.countyClicked) {
             county = <h1>Enter data for: {this.state.clickedCountyData.name}</h1>
             this.retrieveCountyData();
-
         }
         let data = <p>No data here yet!</p>
 
         if(this.state.currentData) {
-            data = this.state.currentData
+            data = this.state.currentData;
         }
+
         return (
             <div className="App-header text-color">
                 <div id="container">
@@ -200,7 +200,7 @@ class entryForm extends Component {
                                 <input type="text" placeholder="Image URL" onChange={this.handleImageChange} value={this.state.image}/><br/>
                                 <img src={this.state.image} alt="Preview"/>
                             </form>
-                            <button onClick={this.postNewData}>Submit</button>
+                            <button onClick={this.postNewData} className="Button Success">Submit</button>
                             </div>
                         </article>
                         <article className="right-half" style={{height: "600px"}}>

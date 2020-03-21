@@ -4,6 +4,7 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 import Wrapper from "../hoc/Wrapper";
 import classes from "./mainPage.css";
+import Button from "react-bootstrap/Button";
 import {} from 'react-router';
 import axios from "../axios-database";
 
@@ -67,7 +68,7 @@ class mainPage extends Component {
         }
     }
 
-    retrieveCountyData() {
+    retrieveCountyData = () => {
         axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
             let dataArray = Object.entries(response.data);
             console.log(dataArray);
@@ -82,7 +83,7 @@ class mainPage extends Component {
                             <div style={{border: "2px solid #74B266"}}>
                                 <p>{element[1].countyData.species}</p>
                                 <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p>
-                                <a href={element[1].countyData.link}>More Info</a><br/>
+                                <Button variant= "success" onClick={element[1].countyData.link}>More Info</Button><br/>
                                 <img src={element[1].countyData.image} placeholder="Image"/>
                             </div>);
                     }
