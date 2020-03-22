@@ -1,6 +1,15 @@
 p {
-  margin-top: 0;
-  margin-bottom: 5px;
+  margin: 0 5px 0 0;
+  width: 50%;
+  display: inline;
+}
+
+body {
+ background-color:  #282c34;
+}
+
+img {
+  float: right;
 }
 
 .App {
@@ -57,6 +66,7 @@ p {
 .Description {
   font-size: 12px;
 }
+
 ::-webkit-scrollbar {
   background-color:#fff;
   width:16px

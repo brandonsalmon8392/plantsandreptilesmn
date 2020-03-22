@@ -51,8 +51,45 @@ class mainPage extends Component {
                 dataRendered: false
             });
             this.state.clickedCounty.color = am4core.color("#367B25");
+            this.retrieveCountyData();
         })
 
+    }
+
+    renderMap() {
+        let map = am4core.create("chartdiv", am4maps.MapChart);
+        map.homeZoomLevel = 4;
+        map.homeGeoPoint = {
+            latitude: -100,
+            longitude: 30
+        };
+        map.geodata = am4geodata_region_usaCountiesHigh;
+        map.projection = new am4maps.projections.AlbersUsa();
+        let polygonSeries = map.series.push(new am4maps.MapPolygonSeries());
+        polygonSeries.useGeodata = true;
+        let polygonTemplate = polygonSeries.mapPolygons.template;
+        polygonTemplate.tooltipText = "{NAME}";
+        polygonTemplate.fill = am4core.color("#74B266");
+        let hs = polygonTemplate.states.create("hover");
+        hs.properties.fill = am4core.color("#367B25");
+        polygonTemplate.tooltipText = "{name} County";
+        this.setState({map: map});
+
+        polygonSeries.mapPolygons.template.events.on("hit", (event) => {
+            if (this.state.clickedCounty != null) {
+                this.state.clickedCounty.color = am4core.color("#74B266")
+            }
+
+            this.setState({
+                countyClicked: true,
+                clickedCounty: event.target,
+                clickedCountyData: event.target._dataItem._dataContext,
+                countyData: null,
+                dataRendered: false
+            });
+            this.state.clickedCounty.color = am4core.color("#367B25");
+            this.retrieveCountyData();
+        })
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -80,23 +117,20 @@ class mainPage extends Component {
                     if (element[1].countyID === this.state.clickedCountyData.name) {
                             foundData = true;
                         return (
-                            <div style={{border: "2px solid #74B266"}}>
-                                <p>{element[1].countyData.species}</p>
-                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p>
-                                <Button variant= "success" onClick={element[1].countyData.link}>More Info</Button><br/>
-                                <img src={element[1].countyData.image} placeholder="Image"/>
+                            <div style={{border: "2px solid #74B266", display: "block", overflow: "auto"}}>
+                                <p>{element[1].countyData.species}</p><br/>
+                                <img style={{float: "right"}} src={element[1].countyData.image} placeholder="Image"/>
+                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p><br/>
+                                <Button variant= "success" style={{float: "bottom"}} onClick={() => { window.location.href = element[1].countyData.link}}>More Info</Button><br/>
                             </div>);
                     }
                 }
             });
              if(foundData) {
-                 this.setState({countyData: renderData, dataRendered: true});
+                 this.setState({countyData: renderData, dataIsRendered: true});
              }
-
         })
     }
-
-
 
     render() {
         let county = <h2 className="County">Select a county to see it's native species!</h2>;
@@ -117,9 +151,8 @@ class mainPage extends Component {
                 </Wrapper>
             );
         }
-
         return (
-            <div className="App-header">
+            <div className="App-header position-absolute w-100">
                 <h1 style={{margin: "0 auto", color: "#74B266", marginBottom: "34px"}}>Native Plants and Reptiles
                     MN</h1>
 

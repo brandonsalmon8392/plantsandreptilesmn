@@ -6,6 +6,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import Button from "react-bootstrap/Button";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
+
 class entryForm extends Component {
     state = {
         map: null,
@@ -19,7 +20,7 @@ class entryForm extends Component {
         description: null,
         link: null,
         image: null
-    }
+    };
 
     componentDidMount() {
         let map = am4core.create("chartdiv", am4maps.MapChart);
@@ -42,9 +43,9 @@ class entryForm extends Component {
         this.setState({map: map});
 
         polygonSeries.mapPolygons.template.events.on("hit", (event) => {
-            console.log(event.target.properties.fill)
+            console.log(event.target.properties.fill);
             event.target.properties.fill = am4core.color("#367B25");
-            console.log(event.target.properties.fill)
+            console.log(event.target.properties.fill);
             this.setState({
                 countyClicked: true,
                 clickedCounty: event.target,
@@ -58,7 +59,14 @@ class entryForm extends Component {
             });
             console.log(event.target)
         })
+    }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        if (this.state.dataRendered) {//asdasd
+            return false;
+        } else {
+            return true;
+        }
     }
 
     handleSpeciesChange = (event) => {
@@ -79,7 +87,7 @@ class entryForm extends Component {
     }
 
     postNewData = (data) => {
-        if(data.elementID) {
+        if (data.elementID) {
             let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
             dataurl += data.elementID;
             axios.put(dataurl, {
@@ -90,8 +98,7 @@ class entryForm extends Component {
                     image: data.image
                 }
             })
-        }
-        else {
+        } else {
             let newData = {
                 countyID: this.state.clickedCountyData.name,
                 countyData:
@@ -114,16 +121,16 @@ class entryForm extends Component {
             link: data.link,
             image: data.image
         });
+        this.forceUpdate();
     }
 
     removePost = (data) => {
-        if(window.confirm("Are you sure?")) {
+        if (window.confirm("Are you sure?")) {
             console.log("Post Deleted");
             let dataurl = 'https://reptile-mn.firebaseio.com/counties/' + data.elementID;
             console.log(dataurl);
             axios.delete(dataurl);
-        }
-        else {
+        } else {
             return
         }
     }
@@ -135,7 +142,7 @@ class entryForm extends Component {
             let renderData = null;
             let foundData = false;
             renderData = dataArray.map(element => {
-                if(element[1].countyID) {
+                if (element[1].countyID) {
                     if (element[1].countyID === this.state.clickedCountyData.name) {
                         console.log(element[1].countyData.species);
                         foundData = true;
@@ -146,39 +153,46 @@ class entryForm extends Component {
                             link: element[1].countyData.link,
                             image: element[1].countyData.image
                         };
-                        return (
-                            <div style={{border: "2px solid #74B266"}}>
-                                <p>{element[1].countyData.species}</p>
-                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p>
-                                <a href={element[1].countyData.link}>More Info</a><br/>
-                                <img src={element[1].countyData.image} placeholder="Image"/>
-                                <Button variant="success" onClick= {() => {this.editPost(data)}}>Edit</Button>
-                                <Button variant="danger" onClick={() => {this.removePost(data)}}>Delete</Button>
+                        return (//asdasd
+                            <div style={{border: "2px solid #74B266", display: "block", overflow: "auto"}}>
+                                <p>{element[1].countyData.species}</p><br/>
+                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p><br/>
+                                <Button variant="success" style={{float: "bottom"}} onClick={() => {
+                                    window.location.href = element[1].countyData.link
+                                }}>More Info</Button><br/>
+                                <img className="dataImage" src={element[1].countyData.image} placeholder="Image"/>
+                                <div className="controlButton">
+                                <Button variant="success" onClick={() => {
+                                    this.editPost(data)
+                                }}>Edit</Button>
+                                <Button  variant="danger" onClick={() => {
+                                    this.removePost(data)
+                                }}>Delete</Button>
+                                </div>
                             </div>);
                     }
                 }
             });
-            if(foundData) {
+            if (foundData) {
                 this.setState({currentData: renderData, dataRendered: true});
             }
-
         })
     }
 
     render() {
-        let county = <h1>Enter data for: Select a county</h1>;
-        if(this.state.countyClicked) {
-            county = <h1>Enter data for: {this.state.clickedCountyData.name}</h1>
+        let county = "Enter data for: Select a county";
+        if (this.state.countyClicked) {
+            county = "Enter data for: " + this.state.clickedCountyData.name;
             this.retrieveCountyData();
         }
         let data = <p>No data here yet!</p>
 
-        if(this.state.currentData) {
+        if (this.state.currentData) {
             data = this.state.currentData;
         }
 
         return (
-            <div className="App-header text-color">
+            <div className="App-header text-color position-absolute w-100">
                 <div id="container">
                     <div className="left-half">
                         <article>
@@ -187,20 +201,26 @@ class entryForm extends Component {
                     </div>
                     <div className="right-half">
                         <article>
-                            {county}
+                            <h1 className="header">{county}</h1>
                             <div className="left-half">
-                            <form>
-                                <label>Species:</label>
-                                <input type="text" placeholder="Species Name" onChange={this.handleSpeciesChange} value={this.state.species}/><br/>
-                                <label>Description:</label>
-                                <textarea placeholder="Description" onChange={this.handleDescriptionChange} value={this.state.description}/><br/>
-                                <label>Link: </label>
-                                <input type="text" placeholder="Link to more info" onChange={this.handleLinkChange} value={this.state.link}/><br/>
-                                <label>Image: </label>
-                                <input type="text" placeholder="Image URL" onChange={this.handleImageChange} value={this.state.image}/><br/>
-                                <img src={this.state.image} alt="Preview"/>
-                            </form>
-                            <button onClick={this.postNewData} className="Button Success">Submit</button>
+                                <form>
+                                    <label>Species:</label><br/>
+                                    <input type="text" placeholder="Species Name" onChange={this.handleSpeciesChange}
+                                           value={this.state.species}/><br/>
+                                    <label>Description:</label><br/>
+                                    <textarea placeholder="Description" style={{fontSize: "18px"}}
+                                              onChange={this.handleDescriptionChange}
+                                              value={this.state.description}/><br/>
+                                    <label>Link: </label><br/>
+                                    <input type="text" placeholder="Link to more info" onChange={this.handleLinkChange}
+                                           value={this.state.link}/><br/>
+                                    <label>Image: </label><br/>
+                                    <input type="text" placeholder="Image URL" onChange={this.handleImageChange}
+                                           value={this.state.image}/><br/>
+                                    <img src={this.state.image} style={{height: "200px", width: "250px"}}
+                                         alt="Preview"/><br/>
+                                </form>
+                                <button onClick={this.postNewData} className="Button Success">Submit</button>
                             </div>
                         </article>
                         <article className="right-half" style={{height: "600px"}}>
