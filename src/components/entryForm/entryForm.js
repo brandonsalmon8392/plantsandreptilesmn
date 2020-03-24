@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import axios from "../axios-database"
+import { Route, Redirect } from "react-router-dom";
+import axios from "../../axios-database"
 import './entryForm.css'
-import classes from './entryForm.css'
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import Button from "react-bootstrap/Button";
@@ -16,10 +16,10 @@ class entryForm extends Component {
         currentData: null,
         dataRendered: false,
         elementID: null,
-        species: null,
-        description: null,
-        link: null,
-        image: null
+        species: "",
+        description: "",
+        link: "",
+        image: ""
     };
 
     componentDidMount() {
@@ -59,6 +59,9 @@ class entryForm extends Component {
             });
             console.log(event.target)
         })
+    }
+    componentWillUnmount() {
+        this.state.map.dispose();
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -162,7 +165,7 @@ class entryForm extends Component {
                                 }}>More Info</Button><br/>
                                 <img className="dataImage" src={element[1].countyData.image} placeholder="Image"/>
                                 <div className="controlButton">
-                                <Button variant="success" onClick={() => {
+                                <Button variant="success" style={{marginRight: "5px"}} onClick={() => {
                                     this.editPost(data)
                                 }}>Edit</Button>
                                 <Button  variant="danger" onClick={() => {
@@ -234,5 +237,6 @@ class entryForm extends Component {
         );
     }
 }
+
 
 export default entryForm;

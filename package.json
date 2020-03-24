@@ -5,11 +5,14 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.9.9",
     "@amcharts/amcharts4-geodata": "^4.1.12",
+    "@material-ui/core": "^4.9.7",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
+    "firebase": "^7.12.0",
+    "googleapis": "^48.0.0",
     "react": "^16.13.0",
     "react-bootstrap": "^1.0.0-beta.17",
     "react-dom": "^16.13.0",
@@ -18,7 +21,8 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-spring": "^8.0.27",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -29,16 +33,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    "last 2 Chrome versions"
+  ]
 }

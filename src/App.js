@@ -1,17 +1,19 @@
-import React, {Component, useContext} from 'react';
+import React, {useContext} from 'react';
 import './App.css';
-import classes from './App.css'
 import {Route, Switch, __RouterContext} from 'react-router-dom'
+import ProtectedRoute from "./components/ProtectedRouter";
+import { connect } from "react-redux";
 import {useTransition, animated} from "react-spring";
 import NavBar from "./NavBar/Navbar";
-import mainPage from './mainPage/mainPage';
-import entryForm from './entryForm/entryForm'
-import aboutPage from './aboutPage/aboutPage'
-import Auth from "./Auth/Auth";
+import mainPage from './components/mainPage/mainPage';
+import entryForm from './components/entryForm/entryForm'
+import aboutPage from './components/aboutPage/aboutPage'
+import Login from "./components/login"
 
-const App = () => {
+const App = (props) => {
 
     const {location} = useContext(__RouterContext);
+    const { isAuthenticated, isVerifying } = props;
 
     console.log(location)
     const transitions = useTransition(location, location => location.pathname, {
@@ -29,8 +31,15 @@ const App = () => {
                     <Switch location={item}>
                         <Route exact path="/" component={mainPage}/>
                         <Route exact path="/about" component={aboutPage}/>
-                        <Route exact path="/add" component={entryForm}/>
-                        <Route exact path="/login" component={Auth}/>
+                        <ProtectedRoute
+                            exact
+                            path="/add"
+                            component={entryForm}
+                            isAuthenticated={isAuthenticated}
+                            isVerifying={isVerifying}
+                        />
+                        <Route path="/login" component={Login} />
+                        {/*<Route exact path="/login" component={Auth}/>*/}
                     </Switch>
                 </animated.div>
             ))}
@@ -40,4 +49,10 @@ const App = () => {
 
 };
 
-export default App;
+function mapStateToProps(state) {
+    return {
+        isAuthenticated: state.auth.isAuthenticated,
+        isVerifying: state.auth.isVerifying
+    };
+}
+export default connect(mapStateToProps)(App);

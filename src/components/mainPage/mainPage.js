@@ -2,11 +2,11 @@ import React, {Component} from "react";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
-import Wrapper from "../hoc/Wrapper";
+import Wrapper from "../../hoc/Wrapper";
 import classes from "./mainPage.css";
 import Button from "react-bootstrap/Button";
 import {} from 'react-router';
-import axios from "../axios-database";
+import axios from "../../axios-database";
 
 
 class mainPage extends Component {
@@ -14,6 +14,7 @@ class mainPage extends Component {
         map: null,
         countyClicked: false,
         clickedCounty: null,
+        prevClickedCounty: null,
         clickedCountyData: null,
         countyData: null,
         dataRendered: false
@@ -35,25 +36,41 @@ class mainPage extends Component {
         polygonTemplate.fill = am4core.color("#74B266");
         let hs = polygonTemplate.states.create("hover");
         hs.properties.fill = am4core.color("#367B25");
+        let as = polygonTemplate.states.create("active");
+        as.properties.fill = am4core.color("#367B25");
+        let ns = polygonTemplate.states.create("normal");
+        ns.properties.fill = am4core.color("#74B266");
+
         polygonTemplate.tooltipText = "{name} County";
         this.setState({map: map});
 
         polygonSeries.mapPolygons.template.events.on("hit", (event) => {
-            if (this.state.clickedCounty != null) {
-                this.state.clickedCounty.color = am4core.color("#74B266")
+            let target = polygonSeries.getPolygonById(event.target._dataItem.dataContext.id)
+            let prevTarget = null;
+            if(this.state.clickedCounty) {
+                 prevTarget = polygonSeries.getPolygonById(this.state.clickedCounty);
             }
-
+             if(this.state.clickedCounty === event.target._dataItem.dataContext.id || !this.state.clickedCounty) {
+                 target.setState("active");
+             }
+             else {
+                 target.setState("active");
+                 prevTarget.setState("normal");
+             }
             this.setState({
                 countyClicked: true,
-                clickedCounty: event.target,
+                clickedCounty: event.target._dataItem.dataContext.id,
                 clickedCountyData: event.target._dataItem._dataContext,
                 countyData: null,
                 dataRendered: false
             });
-            this.state.clickedCounty.color = am4core.color("#367B25");
+
             this.retrieveCountyData();
         })
 
+    }
+    componentWillUnmount() {
+        this.state.map.dispose();
     }
 
     renderMap() {
@@ -76,9 +93,6 @@ class mainPage extends Component {
         this.setState({map: map});
 
         polygonSeries.mapPolygons.template.events.on("hit", (event) => {
-            if (this.state.clickedCounty != null) {
-                this.state.clickedCounty.color = am4core.color("#74B266")
-            }
 
             this.setState({
                 countyClicked: true,
@@ -87,7 +101,6 @@ class mainPage extends Component {
                 countyData: null,
                 dataRendered: false
             });
-            this.state.clickedCounty.color = am4core.color("#367B25");
             this.retrieveCountyData();
         })
     }
@@ -127,7 +140,7 @@ class mainPage extends Component {
                 }
             });
              if(foundData) {
-                 this.setState({countyData: renderData, dataIsRendered: true});
+                 this.setState({countyData: renderData, dataRendered: true});
              }
         })
     }
