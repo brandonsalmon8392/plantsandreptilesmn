@@ -21,6 +21,7 @@ class aboutPage extends Component{
                     <h3 style={{color: "#74B266"}}>Conservation Efforts</h3>
                     <a href="https://mnherpsoc.org/mn-herps/">Get involved with the Minnesota Herpetological Society </a><br/>
                     <a href="https://www.dnr.state.mn.us/nr/index.html">Learn more about Minnesota regulations</a>
+                    <a href="https://www.prairiemoon.com/">Shop local plants</a>
                 </div>
             </div>
         );
