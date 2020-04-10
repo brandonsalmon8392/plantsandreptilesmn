@@ -224,6 +224,7 @@ class entryForm extends Component {
                                          alt="Preview"/><br/>
                                 </form>
                                 <button onClick={this.postNewData} className="Button Success">Submit</button>
+
                             </div>
                         </article>
                         <article className="right-half" style={{height: "600px"}}>

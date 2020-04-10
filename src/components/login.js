@@ -65,7 +65,7 @@ class Login extends Component {
         } else {
             return (
                 <div className="position-absolute w-100">
-                <Container component="main" style={{width: "30%"}}>
+                <Container component="main" style={{width: "50%"}}>
                     <Paper className={classes.paper}>
                         <Avatar className={classes.avatar}>
                         </Avatar>

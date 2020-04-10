@@ -73,7 +73,21 @@ class mainPage extends Component {
         this.state.map.dispose();
     }
 
-    renderMap() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        this.state.map.validate();
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        if(this.state.dataRendered) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+
+    renderMap = () => {
         let map = am4core.create("chartdiv", am4maps.MapChart);
         map.homeZoomLevel = 4;
         map.homeGeoPoint = {
@@ -103,20 +117,7 @@ class mainPage extends Component {
             });
             this.retrieveCountyData();
         })
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        this.state.map.validate();
-    }
-
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if(this.state.dataRendered) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
+    };
 
     retrieveCountyData = () => {
         axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
@@ -158,7 +159,7 @@ class mainPage extends Component {
             }
 
             county = (
-                <Wrapper className={classes.County}>
+                <Wrapper className={classes.County} style={{height: "40%"}}>
                     <h2 className="County">{this.state.clickedCountyData.name} County</h2>
                     {data}
                 </Wrapper>
