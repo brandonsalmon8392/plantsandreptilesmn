@@ -25,12 +25,15 @@ h3 {
 }
 
 .App-link {
-    color: #61dafb;
+    color: #8bd69c;
 }
 
 .card-extra {
     background-color: #282c34;
-    margin: auto;
+    width: 20%;
+    height: 10rem;
+    padding-bottom: 20rem;
+    margin: auto auto 10rem;
 }
 
 #container {

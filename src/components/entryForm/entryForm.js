@@ -1,5 +1,4 @@
-import React, {Component} from "react";
-import { Route, Redirect } from "react-router-dom";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import axios from "../../axios-database"
 import './entryForm.css'
 import * as am4core from "@amcharts/amcharts4/core";
@@ -7,89 +6,69 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import Button from "react-bootstrap/Button";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 
-class entryForm extends Component {
-    state = {
-        map: null,
-        countyClicked: false,
-        clickedCounty: null,
-        clickedCountyData: null,
-        currentData: null,
-        dataRendered: false,
-        elementID: null,
-        species: "",
-        description: "",
-        link: "",
-        image: ""
+const EntryForm = () => {
+    const [map, setMap] = useState(null);
+    const [countyClicked, setCountyClicked] = useState(false);
+    const [clickedCounty, setClickedCounty] = useState(null);
+    const [clickedCountyData, setClickedCountyData] = useState(null);
+    const [currentData, setCurrentData] = useState(null);
+    const [dataRendered, setDataRendered] = useState(false);
+    const [elementID, setElementID] = useState(null);
+    const [species, setSpecies] = useState(null);
+    const [description, setDescription] = useState(null);
+    const [link, setLink] = useState(null);
+    const [image, setImage] = useState(null);
+
+    useLayoutEffect(() => {
+            let chart = am4core.create("chartdiv", am4maps.MapChart);
+            chart.homeZoomLevel = 4;
+            chart.homeGeoPoint = {
+                latitude: -100,
+                longitude: 30
+            };
+            chart.geodata = am4geodata_region_usaCountiesHigh;
+            chart.projection = new am4maps.projections.AlbersUsa();
+            let polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+            polygonSeries.useGeodata = true;
+            let polygonTemplate = polygonSeries.mapPolygons.template;
+            polygonTemplate.tooltipText = "{NAME}";
+            polygonTemplate.fill = am4core.color("#74B266");
+            let hs = polygonTemplate.states.create("hover");
+            hs.properties.fill = am4core.color("#367B25");
+
+            polygonSeries.mapPolygons.template.events.on("hit", (event) => {
+                event.target.properties.fill = am4core.color("#367B25");
+                setClickedCounty(clickedCounty);
+                setClickedCountyData(clickedCountyData);
+            });
+
+            polygonTemplate.tooltipText = "{name} County";
+            setMap(chart);
+
+
+            return () => {
+                chart.dispose()
+            };
+        }
+        , []);
+
+    const handleSpeciesChange = (event) => {
+        setSpecies(event.target.value);
     };
 
-    componentDidMount() {
-        let map = am4core.create("chartdiv", am4maps.MapChart);
-        map.homeZoomLevel = 4;
-        map.homeGeoPoint = {
-            latitude: -100,
-            longitude: 30
-        };
-        map.geodata = am4geodata_region_usaCountiesHigh;
-        map.projection = new am4maps.projections.AlbersUsa();
-        let polygonSeries = map.series.push(new am4maps.MapPolygonSeries());
-        polygonSeries.useGeodata = true;
-        let polygonTemplate = polygonSeries.mapPolygons.template;
-        polygonTemplate.tooltipText = "{NAME}";
-        polygonTemplate.fill = am4core.color("#74B266");
-        let hs = polygonTemplate.states.create("hover");
-        hs.properties.fill = am4core.color("#367B25");
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value);
+    };
 
-        polygonTemplate.tooltipText = "{name} County";
-        this.setState({map: map});
+    const handleLinkChange = (event) => {
+        setLink(event.target.value);
+    };
 
-        polygonSeries.mapPolygons.template.events.on("hit", (event) => {
-            console.log(event.target.properties.fill);
-            event.target.properties.fill = am4core.color("#367B25");
-            console.log(event.target.properties.fill);
-            this.setState({
-                countyClicked: true,
-                clickedCounty: event.target,
-                clickedCountyData: event.target._dataItem._dataContext,
-                currentData: null,
-                dataRendered: false,
-                species: null,
-                description: null,
-                link: null,
-                image: null
-            });
-            console.log(event.target)
-        })
-    }
-    componentWillUnmount() {
-        this.state.map.dispose();
-    }
+    const handleImageChange = (event) => {
+        setImage(event.target.value);
+    };
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if (this.state.dataRendered) {//asdasd
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    handleSpeciesChange = (event) => {
-        this.setState({species: event.target.value})
-    }
-
-    handleDescriptionChange = (event) => {
-        this.setState({description: event.target.value})
-        console.log(this.state.description)
-    }
-
-    handleLinkChange = (event) => {
-        this.setState({link: event.target.value})
-    }
-
-    handleImageChange = (event) => {
-        this.setState({image: event.target.value})
-    }
-
-    postNewData = (data) => {
+    const postNewData = (data) => {
         if (data.elementID) {
             let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
             dataurl += data.elementID;
@@ -116,38 +95,32 @@ class entryForm extends Component {
         }
     };
 
-    editPost(data) {
-        this.setState({
-            elementID: data.elementID,
-            species: data.species,
-            description: data.description,
-            link: data.link,
-            image: data.image
-        });
-        this.forceUpdate();
-    }
+    const editPost = (data) => {
+        setElementID(data.elementID);
+        setSpecies(data.species);
+        setDescription(data.description);
+        setLink(data.link);
+        setImage(data.image);
+    };
 
-    removePost = (data) => {
+    const removePost = (data) => {
         if (window.confirm("Are you sure?")) {
             console.log("Post Deleted");
             let dataurl = 'https://reptile-mn.firebaseio.com/counties/' + data.elementID;
-            console.log(dataurl);
             axios.delete(dataurl);
         } else {
-            return
+            return;
         }
-    }
+    };
 
-    retrieveCountyData() {
+    const retrieveCountyData = () => {
         axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
             let dataArray = Object.entries(response.data);
-            console.log(dataArray);
             let renderData = null;
             let foundData = false;
             renderData = dataArray.map(element => {
                 if (element[1].countyID) {
-                    if (element[1].countyID === this.state.clickedCountyData.name) {
-                        console.log(element[1].countyData.species);
+                    if (element[1].countyID === clickedCountyData.name) {
                         foundData = true;
                         let data = {
                             elementID: element[0],
@@ -165,79 +138,76 @@ class entryForm extends Component {
                                 }}>More Info</Button><br/>
                                 <img className="dataImage" src={element[1].countyData.image} placeholder="Image"/>
                                 <div className="controlButton">
-                                <Button variant="success" style={{marginRight: "5px"}} onClick={() => {
-                                    this.editPost(data)
-                                }}>Edit</Button>
-                                <Button  variant="danger" onClick={() => {
-                                    this.removePost(data)
-                                }}>Delete</Button>
+                                    <Button variant="success" style={{marginRight: "5px"}} onClick={() => {
+                                        editPost(data)
+                                    }}>Edit</Button>
+                                    <Button variant="danger" onClick={() => {
+                                        removePost(data)
+                                    }}>Delete</Button>
                                 </div>
                             </div>);
                     }
                 }
             });
             if (foundData) {
-                this.setState({currentData: renderData, dataRendered: true});
+                setCurrentData(renderData);
+                setDataRendered(true);
             }
         })
+    };
+
+    let county = "Enter data for: Select a county";
+    if (countyClicked) {
+        county = "Enter data for: " + clickedCountyData.name;
+        retrieveCountyData();
+    }
+    let data = <p>No data here yet!</p>
+
+    if (currentData) {
+        data = currentData;
     }
 
-    render() {
-        let county = "Enter data for: Select a county";
-        if (this.state.countyClicked) {
-            county = "Enter data for: " + this.state.clickedCountyData.name;
-            this.retrieveCountyData();
-        }
-        let data = <p>No data here yet!</p>
-
-        if (this.state.currentData) {
-            data = this.state.currentData;
-        }
-
-        return (
-            <div className="App-header text-color position-absolute w-100">
-                <div id="container">
-                    <div className="left-half">
-                        <article>
-                            <div id="chartdiv" style={{height: "600px"}}/>
-                        </article>
-                    </div>
-                    <div className="right-half">
-                        <article>
-                            <h1 className="header">{county}</h1>
-                            <div className="left-half">
-                                <form>
-                                    <label>Species:</label><br/>
-                                    <input type="text" placeholder="Species Name" onChange={this.handleSpeciesChange}
-                                           value={this.state.species}/><br/>
-                                    <label>Description:</label><br/>
-                                    <textarea placeholder="Description" style={{fontSize: "18px"}}
-                                              onChange={this.handleDescriptionChange}
-                                              value={this.state.description}/><br/>
-                                    <label>Link: </label><br/>
-                                    <input type="text" placeholder="Link to more info" onChange={this.handleLinkChange}
-                                           value={this.state.link}/><br/>
-                                    <label>Image: </label><br/>
-                                    <input type="text" placeholder="Image URL" onChange={this.handleImageChange}
-                                           value={this.state.image}/><br/>
-                                    <img src={this.state.image} style={{height: "200px", width: "250px"}}
-                                         alt="Preview"/><br/>
-                                </form>
-                                <button onClick={this.postNewData} className="Button Success">Submit</button>
-
-                            </div>
-                        </article>
-                        <article className="right-half" style={{height: "600px"}}>
-                            <label className="text-color">Current Data:</label>
-                            {data}
-                        </article>
-                    </div>
+    return (
+        <div className="App-header text-color position-absolute w-100">
+            <div id="container">
+                <div className="left-half">
+                    <article>
+                        <div id="chartdiv" style={{height: "600px"}}/>
+                    </article>
                 </div>
+                <div className="right-half">
+                    <article>
+                        <h1 className="header">{county}</h1>
+                        <div className="left-half">
+                            <form>
+                                <label>Species:</label><br/>
+                                <input type="text" placeholder="Species Name" onChange={handleSpeciesChange}
+                                       value={species}/><br/>
+                                <label>Description:</label><br/>
+                                <textarea placeholder="Description" style={{fontSize: "18px"}}
+                                          onChange={handleDescriptionChange}
+                                          value={description}/><br/>
+                                <label>Link: </label><br/>
+                                <input type="text" placeholder="Link to more info" onChange={handleLinkChange}
+                                       value={link}/><br/>
+                                <label>Image: </label><br/>
+                                <input type="text" placeholder="Image URL" onChange={handleImageChange}
+                                       value={image}/><br/>
+                                <img src={image} style={{height: "200px", width: "250px"}}
+                                     alt="Preview"/><br/>
+                            </form>
+                            <button onClick={postNewData} className="Button Success">Submit</button>
 
+                        </div>
+                    </article>
+                    <article className="right-half" style={{height: "600px"}}>
+                        <label className="text-color">Current Data:</label>
+                        {data}
+                    </article>
+                </div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
-
-export default entryForm;
+export default EntryForm;

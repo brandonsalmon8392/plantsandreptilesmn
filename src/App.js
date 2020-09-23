@@ -7,8 +7,8 @@ import {useTransition, animated} from "react-spring";
 import NavBar from "./NavBar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Wrapper from "./hoc/Wrapper";
-import mainPage from './components/mainPage/mainPage';
-import entryForm from './components/entryForm/entryForm'
+import MainPage from './components/mainPage/mainPage';
+import EntryForm from './components/entryForm/entryForm'
 import aboutPage from './components/aboutPage/aboutPage'
 import Login from "./components/login"
 
@@ -17,7 +17,6 @@ const App = (props) => {
     const {location} = useContext(__RouterContext);
     const {isAuthenticated, isVerifying} = props;
 
-    console.log(location)
     const transitions = useTransition(location, location => location.pathname, {
         from: {opacity: 0, transform: "translate(100%,0)"},
         enter: {opacity: 1, transform: "translate(0%,0)"},
@@ -32,12 +31,12 @@ const App = (props) => {
                 {transitions.map(({item, props, key}) => (
                     <animated.div key={key} style={props}>
                         <Switch location={item}>
-                            <Route exact path="/" component={mainPage}/>
+                            <Route exact path="/" component={MainPage}/>
                             <Route exact path="/about" component={aboutPage}/>
                             <ProtectedRoute
                                 exact
                                 path="/add"
-                                component={entryForm}
+                                component={EntryForm}
                                 isAuthenticated={isAuthenticated}
                                 isVerifying={isVerifying}
                             />
