@@ -1,20 +1,22 @@
-import React, {Component, useEffect, useLayoutEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
+import {useDispatch, useSelector} from "react-redux";
+import allActions from "../../actions/index"
+import InfoCard from "../infoCard/infoCard";
 import Wrapper from "../../hoc/Wrapper";
 import classes from "./mainPage.css";
-import Button from "react-bootstrap/Button";
-import {} from 'react-router';
-import axios from "../../axios-database";
 
-
-const MainPage = () => {
-    const [map, setMap] = useState(null);
-    const [clickedCounty, setClickedCounty] = useState(null);
+const MainPage = (props) => {
+    const [map, setMap] = useState(props.map);
     const [clickedCountyData, setClickedCountyData] = useState(null);
-    const [dataRendered, setDataRendered] = useState(false);
     const [countyData, setCountyData] = useState(null);
+    const [displayedData, setDisplayedData] = useState(null);
+
+    const dispatch = useDispatch();
+
+    const renderData = useSelector(state => state.map.countyData);
 
     useLayoutEffect(() => {
             let chart = am4core.create("chartdiv", am4maps.MapChart);
@@ -39,79 +41,52 @@ const MainPage = () => {
             polygonTemplate.tooltipText = "{name} County";
 
             polygonTemplate.events.on("hit", (event) => {
-                let target = polygonSeries.getPolygonById(event.target._dataItem.dataContext.id)
-                let prevTarget = null;
-                if (clickedCounty) {
-                    prevTarget = polygonSeries.getPolygonById(clickedCounty);
-                }
-                if (clickedCounty === event.target._dataItem.dataContext.id || !clickedCounty) {
-                    target.setState("active");
-                } else {
-                    target.setState("active");
-                    prevTarget.setState("normal");
-                }
-
-                setClickedCounty(event.target._dataItem.dataContext.id);
-                setClickedCountyData(event.target._dataItem._dataContext);
-                console.log(clickedCountyData)
+                console.log(event.target._dataItem.dataContext.name);
+                setClickedCountyData({name: event.target._dataItem.dataContext.name});
+                retrieveCountyData(event.target._dataItem.dataContext.name);
             });
 
             setMap(chart);
 
             return () => {
                 chart.dispose();
-                chart = null;
             }
         },
         []
     );
 
-    const retrieveCountyData = () => {
-        axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
-            let dataArray = Object.entries(response.data);
-            let renderData = null;
-            let foundData = false;
-            renderData = dataArray.map(element => {
-                if (element[1].countyID) {
-                    if (element[1].countyID === clickedCountyData.name) {
-                        foundData = true;
-                        return (
-                            <div style={{border: "2px solid #74B266", display: "block", overflow: "auto"}}>
-                                <p>{element[1].countyData.species}</p><br/>
-                                <img style={{float: "right"}} src={element[1].countyData.image} placeholder="Image"/>
-                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p><br/>
-                                <Button variant="success" style={{float: "bottom"}} onClick={() => {
-                                    window.location.href = element[1].countyData.link
-                                }}>More Info</Button><br/>
-                            </div>);
-                    }
-                }
-            });
-            if (foundData) {
-                setCountyData(renderData);
-                setDataRendered(true);
-            }
-        })
+    const retrieveCountyData = (id) => {
+        dispatch(allActions.mapActions.getCountyData(id));
     };
 
-    let county = <h2 className="County">Select a county to see it's native species!</h2>;
-    if (clickedCounty) {
-        retrieveCountyData();
-        let data = countyData;
+    useEffect(() => {
+        if (renderData) {
+            setCountyData(renderData.map(cardItem => {
+                return (
+                    <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}}/>)
+            }));
+        }
+        console.log('Evaluating renderData');
+       console.log(renderData);
 
-        if (!data) {
-            data = (<div>
+        if (!renderData || renderData.length === 0) {
+            setCountyData(<div>
                 <p>No data here yet!</p>
             </div>);
         }
 
-        county = (
+        setDisplayedData(
             <Wrapper className={classes.County} style={{height: "40%"}}>
-                <h2 className="County">{clickedCountyData.name} County</h2>
-                {data}
+                <h2 className="County">{clickedCountyData != null ? clickedCountyData.name + ' County':
+                    <h2 className="County">Select a county to see it's native species!</h2>}</h2>
+                {countyData}
             </Wrapper>
         );
-    }
+
+        console.log('County Updated');
+        console.log(displayedData);
+    }, [renderData]);
+
     return (
         <div className="App-header position-absolute w-100">
             <h1 style={{margin: "0 auto", color: "#74B266", marginBottom: "34px"}}>Native Plants and Reptiles
@@ -120,12 +95,12 @@ const MainPage = () => {
             <div id="container">
                 <div className="left-half">
                     <article>
-                        <div id="chartdiv" style={{height: "600px"}}/>
+                        <div id="chartdiv" style={{height: "50vh"}}/>
                     </article>
                 </div>
-                <div className="right-half">
+                <div className="right-half"  style={{height: "80vh"}}>
                     <article>
-                        {county}
+                        {displayedData}
                     </article>
                 </div>
             </div>
@@ -133,5 +108,6 @@ const MainPage = () => {
     );
 
 };
+
 
 export default MainPage;

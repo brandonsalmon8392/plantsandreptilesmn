@@ -1,10 +1,11 @@
 import React from 'react';
+import "./Footer.css";
 
 const Footer = () => {
     return (
-      <footer>
-          <p>Plants and reptiles MN | Brandon Salmon 2020</p>
-      </footer>
+        <div >
+                    <p>Plants and Reptiles | Brandon Salmon 2020</p>
+        </div>
     );
 };
 

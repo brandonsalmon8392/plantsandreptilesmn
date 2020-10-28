@@ -3,21 +3,27 @@ import axios from "../../axios-database"
 import './entryForm.css'
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
-import Button from "react-bootstrap/Button";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
+import {useDispatch, useSelector} from "react-redux";
+import allActions from "../../actions";
+import InfoCard from "../infoCard/infoCard";
+import Wrapper from "../../hoc/Wrapper";
+import classes from "../mainPage/mainPage.css";
 
 const EntryForm = () => {
     const [map, setMap] = useState(null);
-    const [countyClicked, setCountyClicked] = useState(false);
-    const [clickedCounty, setClickedCounty] = useState(null);
     const [clickedCountyData, setClickedCountyData] = useState(null);
-    const [currentData, setCurrentData] = useState(null);
-    const [dataRendered, setDataRendered] = useState(false);
+    const [countyData, setCountyData] = useState(null);
+    const [displayedData, setDisplayedData] = useState(null);
     const [elementID, setElementID] = useState(null);
     const [species, setSpecies] = useState(null);
     const [description, setDescription] = useState(null);
     const [link, setLink] = useState(null);
     const [image, setImage] = useState(null);
+
+    const dispatch = useDispatch();
+
+    const renderData = useSelector(state => state.map.countyData);
 
     useLayoutEffect(() => {
             let chart = am4core.create("chartdiv", am4maps.MapChart);
@@ -38,8 +44,8 @@ const EntryForm = () => {
 
             polygonSeries.mapPolygons.template.events.on("hit", (event) => {
                 event.target.properties.fill = am4core.color("#367B25");
-                setClickedCounty(clickedCounty);
-                setClickedCountyData(clickedCountyData);
+                retrieveCountyData(event.target._dataItem.dataContext.name);
+                setClickedCountyData({name: event.target._dataItem.dataContext.name});
             });
 
             polygonTemplate.tooltipText = "{name} County";
@@ -68,27 +74,27 @@ const EntryForm = () => {
         setImage(event.target.value);
     };
 
-    const postNewData = (data) => {
-        if (data.elementID) {
+    const postNewData = () => {
+        if (elementID) {
             let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
-            dataurl += data.elementID;
+            dataurl += elementID;
             axios.put(dataurl, {
                 countyData: {
-                    species: data.species,
-                    description: data.description,
-                    link: data.link,
-                    image: data.image
+                    species: species,
+                    description: description,
+                    link: link,
+                    image: image
                 }
-            })
+            }).then(console.log('Posted that shit fam'))
         } else {
             let newData = {
-                countyID: this.state.clickedCountyData.name,
+                countyID: clickedCountyData.name,
                 countyData:
                     {
-                        species: this.state.species,
-                        description: this.state.description,
-                        link: this.state.link,
-                        image: this.state.image
+                        species: species,
+                        description: description,
+                        link: link,
+                        image: image
                     }
             };
             axios.post('https://reptile-mn.firebaseio.com/counties.json', newData);
@@ -113,59 +119,36 @@ const EntryForm = () => {
         }
     };
 
-    const retrieveCountyData = () => {
-        axios.get('https://reptile-mn.firebaseio.com/counties.json').then(response => {
-            let dataArray = Object.entries(response.data);
-            let renderData = null;
-            let foundData = false;
-            renderData = dataArray.map(element => {
-                if (element[1].countyID) {
-                    if (element[1].countyID === clickedCountyData.name) {
-                        foundData = true;
-                        let data = {
-                            elementID: element[0],
-                            species: element[1].countyData.species,
-                            description: element[1].countyData.description,
-                            link: element[1].countyData.link,
-                            image: element[1].countyData.image
-                        };
-                        return (//asdasd
-                            <div style={{border: "2px solid #74B266", display: "block", overflow: "auto"}}>
-                                <p>{element[1].countyData.species}</p><br/>
-                                <p style={{fontSize: "18px"}}>{element[1].countyData.description}</p><br/>
-                                <Button variant="success" style={{float: "bottom"}} onClick={() => {
-                                    window.location.href = element[1].countyData.link
-                                }}>More Info</Button><br/>
-                                <img className="dataImage" src={element[1].countyData.image} placeholder="Image"/>
-                                <div className="controlButton">
-                                    <Button variant="success" style={{marginRight: "5px"}} onClick={() => {
-                                        editPost(data)
-                                    }}>Edit</Button>
-                                    <Button variant="danger" onClick={() => {
-                                        removePost(data)
-                                    }}>Delete</Button>
-                                </div>
-                            </div>);
-                    }
-                }
-            });
-            if (foundData) {
-                setCurrentData(renderData);
-                setDataRendered(true);
-            }
-        })
+
+    const retrieveCountyData = (id) => {
+        dispatch(allActions.mapActions.getCountyData(id));
     };
 
-    let county = "Enter data for: Select a county";
-    if (countyClicked) {
-        county = "Enter data for: " + clickedCountyData.name;
-        retrieveCountyData();
-    }
-    let data = <p>No data here yet!</p>
+    useEffect(() => {
+            if (renderData) {
+                setCountyData(renderData.map(cardItem => {
+                    return (
+                        <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}} onEdit={editPost}
+                                  onDelete={removePost}/>)
+                }));
+            }
+            if (!renderData || renderData.length === 0) {
+                setCountyData(<div>
+                    <p>No data here yet!</p>
+                </div>);
+            }
 
-    if (currentData) {
-        data = currentData;
-    }
+            setDisplayedData(
+                <Wrapper className={classes.County} style={{height: "40%"}}>
+                    <h2 className="County">{clickedCountyData != null ? clickedCountyData.name :
+                        <h2 className="County">Enter data for: Select a county</h2>} County</h2>
+                    {countyData}
+                </Wrapper>
+            );
+        }
+        ,
+        [renderData]
+    );
 
     return (
         <div className="App-header text-color position-absolute w-100">
@@ -177,7 +160,8 @@ const EntryForm = () => {
                 </div>
                 <div className="right-half">
                     <article>
-                        <h1 className="header">{county}</h1>
+                        <h1 className="header">{clickedCountyData != null ? 'Enter data for: ' + clickedCountyData.name + ' County' :
+                            'Enter data for: Select a county'}</h1>
                         <div className="left-half">
                             <form>
                                 <label>Species:</label><br/>
@@ -202,7 +186,7 @@ const EntryForm = () => {
                     </article>
                     <article className="right-half" style={{height: "600px"}}>
                         <label className="text-color">Current Data:</label>
-                        {data}
+                        {countyData}
                     </article>
                 </div>
             </div>

@@ -28,19 +28,6 @@ textarea {
     height: 100px;
 }
 
-img {
-    width: 150px;
-    height: 100px;
-    float: none;
-}
-
-.dataImage {
-    width: 150px;
-    height: 100px;
-    float: right;
-    margin-top: -90px;
-}
-
 #container {
     display: flex;
     flex-direction: row;

@@ -45,6 +45,7 @@ const App = (props) => {
                         </Switch>
                     </animated.div>
                 ))}
+                <Footer className="footer"/>
             </div>
         </Wrapper>
     );

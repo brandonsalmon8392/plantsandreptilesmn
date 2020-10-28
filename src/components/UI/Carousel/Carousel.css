@@ -1,7 +1,12 @@
-img {
-    width: 30%;
-    height: 60%;
+.carousel-layout {
+    height: 40%;
+}
+
+.carousel-img {
+    width: 70vw;
+    height: 60vh;
+    display: block;
     align-content: center;
-    display: inline;
-    margin-left: 35%;
+    justify-content: center;
+    margin: auto;
 }

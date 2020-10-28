@@ -97,3 +97,8 @@ export const verifyAuth = () => dispatch => {
         dispatch(verifySuccess());
     });
 };
+
+export default {
+    loginUser,
+    verifyAuth
+}
