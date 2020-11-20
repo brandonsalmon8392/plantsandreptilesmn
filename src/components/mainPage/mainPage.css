@@ -50,6 +50,25 @@
   height: 80%;
 }
 
+.bottom-half {
+  float: bottom;
+  height: 50%;
+  overflow: scroll;
+  align-items: center;
+}
+
+.top-half {
+  float: top;
+  height: 50%;
+  overflow: scroll;
+  align-items: center;
+}
+
+.title {
+  color: #74B266;
+  margin: 0 auto 34px;
+}
+
 .County {
   color: #74B266;
   margin: 0 auto;
@@ -81,11 +100,21 @@
 ::-webkit-scrollbar-corner {
   background: rgba(0,0,0,0);
 }
-@keyframes County-Clicked {
-  from {
-    right: -100px
-  }
-  to {
-    left: 50%;
-  }
+
+.example-enter {
+  opacity: 0.01;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.example-leave {
+  opacity: 1;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
 }

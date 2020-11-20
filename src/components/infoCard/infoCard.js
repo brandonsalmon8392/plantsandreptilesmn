@@ -1,10 +1,12 @@
 import React from "react";
 import classes from "./infoCard.css";
 import Button from "react-bootstrap/Button";
+import {useSpring, animated} from 'react-spring'
 
 const InfoCard = (props) => {
+    const prop = useSpring({opacity: 1, from: {opacity: 0}});
     return (
-        <div className="card-layout">
+        <animated.div style={prop} className="card-layout">
             <div>
                 <img className="cardImage" src={props.data.image} placeholder="Image"/>
             </div>
@@ -18,6 +20,7 @@ const InfoCard = (props) => {
                 </div>
             </div>
 
+            {/*optional edit button if a edit function was passed*/}
             {props.onEdit != null ?
                 <div className="controlButton">
                     <Button variant="success" style={{marginRight: "5px"}} onClick={() => {
@@ -28,6 +31,7 @@ const InfoCard = (props) => {
                 null
             }
 
+            {/*optional delete button if a delete function was passed*/}
             {props.onDelete != null ?
                 <div className="controlButton">
                     <Button variant="danger" onClick={() => {
@@ -38,7 +42,7 @@ const InfoCard = (props) => {
                 null
             }
 
-        </div>
+        </animated.div>
     );
 };
 

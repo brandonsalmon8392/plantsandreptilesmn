@@ -3,10 +3,6 @@ label {
     color: inherit;
 }
 
-input {
-    width: 300px;
-    height: 35px;
-}
 input[type="text"]
 {
     font-size:18px;
@@ -21,11 +17,6 @@ form {
 }
 a {
     color: #74B266;
-}
-
-textarea {
-    width: 300px;
-    height: 100px;
 }
 
 #container {

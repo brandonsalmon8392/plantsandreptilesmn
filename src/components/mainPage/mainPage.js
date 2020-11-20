@@ -7,16 +7,23 @@ import allActions from "../../actions/index"
 import InfoCard from "../infoCard/infoCard";
 import Wrapper from "../../hoc/Wrapper";
 import classes from "./mainPage.css";
+import ClipLoader from "react-spinners/ClipLoader";
+import {css} from "@emotion/react";
+import {useSpring, animated} from 'react-spring';
 
 const MainPage = (props) => {
     const [map, setMap] = useState(props.map);
     const [clickedCountyData, setClickedCountyData] = useState(null);
     const [countyData, setCountyData] = useState(null);
-    const [displayedData, setDisplayedData] = useState(null);
 
     const dispatch = useDispatch();
 
-    const renderData = useSelector(state => state.map.countyData);
+    let renderData = useSelector(state => state.map.countyData);
+
+    const override = css`
+                      display: block;
+                      margin: auto;
+                    `;
 
     useLayoutEffect(() => {
             let chart = am4core.create("chartdiv", am4maps.MapChart);
@@ -43,12 +50,15 @@ const MainPage = (props) => {
             polygonTemplate.events.on("hit", (event) => {
                 console.log(event.target._dataItem.dataContext.name);
                 setClickedCountyData({name: event.target._dataItem.dataContext.name});
+                setCountyData(
+                    <ClipLoader color={"#74B266"} size={75} css={override}/>
+                );
                 retrieveCountyData(event.target._dataItem.dataContext.name);
             });
 
             setMap(chart);
-
             return () => {
+                retrieveCountyData();
                 chart.dispose();
             }
         },
@@ -56,58 +66,47 @@ const MainPage = (props) => {
     );
 
     const retrieveCountyData = (id) => {
+        setClickedCountyData({name: id});//sadsasdasdasdasdasdasdasdasd
         dispatch(allActions.mapActions.getCountyData(id));
     };
 
     useEffect(() => {
         if (renderData) {
-            setCountyData(renderData.map(cardItem => {
-                return (
-                    <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}}/>)
-            }));
+            setCountyData(
+                renderData.map(cardItem => {
+                    return (
+                        <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}}/>)
+                })
+            )
+            ;
+            if (renderData.length === 0) {
+                setCountyData(<div>
+                    <p>No data here yet!</p>
+                </div>);
+            }
         }
-        console.log('Evaluating renderData');
-       console.log(renderData);
-
-        if (!renderData || renderData.length === 0) {
-            setCountyData(<div>
-                <p>No data here yet!</p>
-            </div>);
-        }
-
-        setDisplayedData(
-            <Wrapper className={classes.County} style={{height: "40%"}}>
-                <h2 className="County">{clickedCountyData != null ? clickedCountyData.name + ' County':
-                    <h2 className="County">Select a county to see it's native species!</h2>}</h2>
-                {countyData}
-            </Wrapper>
-        );
-
-        console.log('County Updated');
-        console.log(displayedData);
     }, [renderData]);
 
     return (
         <div className="App-header position-absolute w-100">
-            <h1 style={{margin: "0 auto", color: "#74B266", marginBottom: "34px"}}>Native Plants and Reptiles
-                MN</h1>
-
+            <h1 className="title">Interactive Map</h1>
             <div id="container">
                 <div className="left-half">
                     <article>
                         <div id="chartdiv" style={{height: "50vh"}}/>
                     </article>
                 </div>
-                <div className="right-half"  style={{height: "80vh"}}>
+                <div className="right-half" style={{height: "80vh"}}>
+
                     <article>
-                        {displayedData}
+                        <h2 className="County">{clickedCountyData != null ? clickedCountyData.name + ' County' :
+                            <h2 className="County">Select a county to see it's native species!</h2>}</h2>
+                        {countyData}
                     </article>
                 </div>
             </div>
         </div>
     );
-
 };
-
 
 export default MainPage;

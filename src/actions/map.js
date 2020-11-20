@@ -1,5 +1,8 @@
 import axios from "../axios-database";
 import React from "react";
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4maps from "@amcharts/amcharts4/maps";
+import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 
 export const CREATE_MAP = "CREATE_MAP";
 export const REQUEST_COUNTY_DATA = "REQUEST_COUNTY_DATA";

@@ -23,7 +23,6 @@ const App = (props) => {
         leave: {opacity: 0, transform: "translate(-50%,0)"}
     });
 
-//sdfsdfasdasd
     return (
         <Wrapper>
             <div style={{backgroundColor: "#282c34"}}>

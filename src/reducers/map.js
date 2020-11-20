@@ -11,7 +11,8 @@ export default (
     switch (action.type) {
         case CREATE_MAP:
             return {
-                ...state
+                ...state,
+                map: action.payload
             };
         case REQUEST_COUNTY_DATA:
             return {

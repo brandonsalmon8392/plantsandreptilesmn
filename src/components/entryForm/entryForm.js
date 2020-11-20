@@ -9,6 +9,8 @@ import allActions from "../../actions";
 import InfoCard from "../infoCard/infoCard";
 import Wrapper from "../../hoc/Wrapper";
 import classes from "../mainPage/mainPage.css";
+import ClipLoader from "react-spinners/ClipLoader";
+import {css} from "@emotion/react";
 
 const EntryForm = () => {
     const [map, setMap] = useState(null);
@@ -24,6 +26,11 @@ const EntryForm = () => {
     const dispatch = useDispatch();
 
     const renderData = useSelector(state => state.map.countyData);
+
+    const override = css`
+                      display: block;
+                      margin: auto;
+                    `;
 
     useLayoutEffect(() => {
             let chart = am4core.create("chartdiv", am4maps.MapChart);
@@ -45,6 +52,9 @@ const EntryForm = () => {
             polygonSeries.mapPolygons.template.events.on("hit", (event) => {
                 event.target.properties.fill = am4core.color("#367B25");
                 retrieveCountyData(event.target._dataItem.dataContext.name);
+                setCountyData(
+                    <ClipLoader color={"#74B266"} size={75} css={override}/>
+                );
                 setClickedCountyData({name: event.target._dataItem.dataContext.name});
             });
 
@@ -162,19 +172,19 @@ const EntryForm = () => {
                     <article>
                         <h1 className="header">{clickedCountyData != null ? 'Enter data for: ' + clickedCountyData.name + ' County' :
                             'Enter data for: Select a county'}</h1>
-                        <div className="left-half">
+                        <div className="top-half">
                             <form>
-                                <label>Species:</label><br/>
+                                <label>Species:</label>
                                 <input type="text" placeholder="Species Name" onChange={handleSpeciesChange}
                                        value={species}/><br/>
-                                <label>Description:</label><br/>
+                                <label>Description:</label>
                                 <textarea placeholder="Description" style={{fontSize: "18px"}}
                                           onChange={handleDescriptionChange}
                                           value={description}/><br/>
-                                <label>Link: </label><br/>
+                                <label>Link: </label>
                                 <input type="text" placeholder="Link to more info" onChange={handleLinkChange}
                                        value={link}/><br/>
-                                <label>Image: </label><br/>
+                                <label>Image: </label>
                                 <input type="text" placeholder="Image URL" onChange={handleImageChange}
                                        value={image}/><br/>
                                 <img src={image} style={{height: "200px", width: "250px"}}
@@ -184,7 +194,7 @@ const EntryForm = () => {
 
                         </div>
                     </article>
-                    <article className="right-half" style={{height: "600px"}}>
+                    <article className="bottom-half" style={{height: "600px"}}>
                         <label className="text-color">Current Data:</label>
                         {countyData}
                     </article>
