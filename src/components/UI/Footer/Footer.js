@@ -3,8 +3,8 @@ import "./Footer.css";
 
 const Footer = () => {
     return (
-        <div >
-                    <p>Plants and Reptiles | Brandon Salmon 2020</p>
+        <div className="footer">
+                    <p>Plants and Reptiles MN | Brandon Salmon 2020</p>
         </div>
     );
 };

@@ -1,8 +1,8 @@
 import React from "react";
-import classes from "./infoCard.css";
+import classes from "./InfoCard.css";
 import Button from "react-bootstrap/Button";
 import {useSpring, animated} from 'react-spring'
-
+//sadas
 const InfoCard = (props) => {
     const prop = useSpring({opacity: 1, from: {opacity: 0}});
     return (
@@ -13,7 +13,7 @@ const InfoCard = (props) => {
             <div className="card-info">
                 <div className={classes.cardContainer}>
                     <h4>{props.data.species}</h4>
-                    <p style={{fontSize: "16px"}}>{props.data.description}</p>
+                    <p className="info-card-text" style={{fontSize: "16px"}}>{props.data.description}</p>
                     <Button variant="success" className="card-btn" onClick={() => {
                         window.location.href = props.data.link
                     }}>More Info</Button>

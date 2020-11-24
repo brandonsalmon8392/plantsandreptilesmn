@@ -5,7 +5,7 @@ import 'firebase/firestore'
 const firebaseConfig = {
     apiKey: "AIzaSyC9uRtueUU9jBWHrXI-09Kxrg7oBEc5dkQ",
     authDomain: "reptile-mn.firebaseapp.com",
-    databaseURL: "https://reptile-mn.firebaseio.com",
+    databaseURL: "https://reptile-mn.firebaseio.com/",
     projectId: "reptile-mn",
     storageBucket: "reptile-mn.appspot.com",
     messagingSenderId: "130065925724",

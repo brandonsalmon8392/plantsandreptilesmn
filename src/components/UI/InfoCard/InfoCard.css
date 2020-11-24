@@ -3,12 +3,16 @@
     height: 15vw;
 }
 
-.card-text {
+.info-card-text {
     font-size: 8px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .card-layout {
     display: flex;
+    overflow: hidden;
+    text-overflow: ellipsis;
     flex-direction: row;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
     margin: 10px 10px 10px 10px;
@@ -52,4 +56,9 @@
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
     letter-spacing: 1px;
     font-size: 16px;
+}
+
+.controlButton {
+    margin: 0 auto;
+    float: right;
 }

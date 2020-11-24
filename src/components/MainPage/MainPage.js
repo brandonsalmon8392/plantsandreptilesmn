@@ -4,21 +4,18 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 import {useDispatch, useSelector} from "react-redux";
 import allActions from "../../actions/index"
-import InfoCard from "../infoCard/infoCard";
-import Wrapper from "../../hoc/Wrapper";
-import classes from "./mainPage.css";
+import InfoCard from "../UI/InfoCard/InfoCard";
+import classes from "./MainPage.css";
 import ClipLoader from "react-spinners/ClipLoader";
 import {css} from "@emotion/react";
-import {useSpring, animated} from 'react-spring';
 
 const MainPage = (props) => {
-    const [map, setMap] = useState(props.map);
     const [clickedCountyData, setClickedCountyData] = useState(null);
     const [countyData, setCountyData] = useState(null);
 
     const dispatch = useDispatch();
 
-    let renderData = useSelector(state => state.map.countyData);
+    let databaseResult = useSelector(state => state.map.countyData);
 
     const override = css`
                       display: block;
@@ -26,6 +23,8 @@ const MainPage = (props) => {
                     `;
 
     useLayoutEffect(() => {
+            am4core.options.autoDispose = true;
+
             let chart = am4core.create("chartdiv", am4maps.MapChart);
             chart.homeZoomLevel = 4;
             chart.homeGeoPoint = {
@@ -56,9 +55,7 @@ const MainPage = (props) => {
                 retrieveCountyData(event.target._dataItem.dataContext.name);
             });
 
-            setMap(chart);
             return () => {
-                retrieveCountyData();
                 chart.dispose();
             }
         },
@@ -66,26 +63,27 @@ const MainPage = (props) => {
     );
 
     const retrieveCountyData = (id) => {
-        setClickedCountyData({name: id});//sadsasdasdasdasdasdasdasdasd
+        setClickedCountyData({name: id});
         dispatch(allActions.mapActions.getCountyData(id));
     };
 
     useEffect(() => {
-        if (renderData) {
-            setCountyData(
-                renderData.map(cardItem => {
-                    return (
-                        <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}}/>)
-                })
-            )
-            ;
-            if (renderData.length === 0) {
+        if (databaseResult) {
+            if (databaseResult.length === 0) {
                 setCountyData(<div>
                     <p>No data here yet!</p>
                 </div>);
             }
+            else {
+                setCountyData(
+                    databaseResult.map(cardItem => {
+                        return (
+                            <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}}/>)
+                    })
+                );
+            }
         }
-    }, [renderData]);
+    }, [databaseResult]);
 
     return (
         <div className="App-header position-absolute w-100">
@@ -97,7 +95,6 @@ const MainPage = (props) => {
                     </article>
                 </div>
                 <div className="right-half" style={{height: "80vh"}}>
-
                     <article>
                         <h2 className="County">{clickedCountyData != null ? clickedCountyData.name + ' County' :
                             <h2 className="County">Select a county to see it's native species!</h2>}</h2>

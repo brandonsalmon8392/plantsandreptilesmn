@@ -1,15 +1,5 @@
 label {
-    display: block;
     color: inherit;
-}
-
-input[type="text"]
-{
-    font-size:18px;
-}
-input[type="textarea"]
-{
-    font-size:18px;
 }
 
 form {
@@ -55,9 +45,6 @@ a {
     font-weight: bold;
 }
 
-.controlButton {
-    margin: 0 auto;
-}
 .header {
     color: #74B266;
 }

@@ -5,19 +5,22 @@ import ProtectedRoute from "./components/ProtectedRouter";
 import {connect} from "react-redux";
 import {useTransition, animated} from "react-spring";
 import NavBar from "./NavBar/Navbar";
-import Footer from "./components/Footer/Footer";
+import Footer from "./components/UI/Footer/Footer";
 import Wrapper from "./hoc/Wrapper";
-import MainPage from './components/mainPage/mainPage';
-import EntryForm from './components/entryForm/entryForm'
-import aboutPage from './components/aboutPage/aboutPage'
+import MainPage from './components/MainPage/MainPage';
+import EntryForm from './components/EntryForm/EntryForm'
+import aboutPage from './components/AboutPage/AboutPage'
 import Login from "./components/login"
 
 const App = (props) => {
 
     const {location} = useContext(__RouterContext);
     const {isAuthenticated, isVerifying} = props;
+    console.log(location);
+    const pathNames = ['/','/About', '/add', 'login'];
 
-    const transitions = useTransition(location, location => location.pathname, {
+    const transitions = useTransition(location, location => location.pathname,
+        {
         from: {opacity: 0, transform: "translate(100%,0)"},
         enter: {opacity: 1, transform: "translate(0%,0)"},
         leave: {opacity: 0, transform: "translate(-50%,0)"}

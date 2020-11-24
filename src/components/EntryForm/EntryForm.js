@@ -1,27 +1,24 @@
 import React, {useEffect, useLayoutEffect, useState} from "react";
 import axios from "../../axios-database"
-import './entryForm.css'
+import './EntryForm.css'
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 import {useDispatch, useSelector} from "react-redux";
 import allActions from "../../actions";
-import InfoCard from "../infoCard/infoCard";
-import Wrapper from "../../hoc/Wrapper";
-import classes from "../mainPage/mainPage.css";
+import InfoCard from "../UI/InfoCard/InfoCard";
 import ClipLoader from "react-spinners/ClipLoader";
 import {css} from "@emotion/react";
 
 const EntryForm = () => {
-    const [map, setMap] = useState(null);
     const [clickedCountyData, setClickedCountyData] = useState(null);
     const [countyData, setCountyData] = useState(null);
-    const [displayedData, setDisplayedData] = useState(null);
     const [elementID, setElementID] = useState(null);
     const [species, setSpecies] = useState(null);
     const [description, setDescription] = useState(null);
     const [link, setLink] = useState(null);
     const [image, setImage] = useState(null);
+    const [submitInProgress, setSubmitInProgress] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -59,11 +56,9 @@ const EntryForm = () => {
             });
 
             polygonTemplate.tooltipText = "{name} County";
-            setMap(chart);
-
 
             return () => {
-                chart.dispose()
+                chart.dispose();
             };
         }
         , []);
@@ -85,19 +80,22 @@ const EntryForm = () => {
     };
 
     const postNewData = () => {
+        setSubmitInProgress(true);
+        let dataurl = 'https://reptile-mn.firebaseio.com/counties';
+        let data = {};
         if (elementID) {
-            let dataurl = 'https://reptile-mn.firebaseio.com/counties/';
-            dataurl += elementID;
-            axios.put(dataurl, {
+            dataurl += '/' + elementID;
+            data = {
                 countyData: {
                     species: species,
                     description: description,
                     link: link,
                     image: image
                 }
-            }).then(console.log('Posted that shit fam'))
+            };
         } else {
-            let newData = {
+            dataurl += '.json';
+            data = {
                 countyID: clickedCountyData.name,
                 countyData:
                     {
@@ -107,8 +105,9 @@ const EntryForm = () => {
                         image: image
                     }
             };
-            axios.post('https://reptile-mn.firebaseio.com/counties.json', newData);
         }
+        axios.post(dataurl, data).then(setSubmitInProgress(false));
+
     };
 
     const editPost = (data) => {
@@ -121,9 +120,8 @@ const EntryForm = () => {
 
     const removePost = (data) => {
         if (window.confirm("Are you sure?")) {
-            console.log("Post Deleted");
             let dataurl = 'https://reptile-mn.firebaseio.com/counties/' + data.elementID;
-            axios.delete(dataurl);
+            axios.delete(dataurl).then(console.log("Post Deleted"));
         } else {
             return;
         }
@@ -148,13 +146,6 @@ const EntryForm = () => {
                 </div>);
             }
 
-            setDisplayedData(
-                <Wrapper className={classes.County} style={{height: "40%"}}>
-                    <h2 className="County">{clickedCountyData != null ? clickedCountyData.name :
-                        <h2 className="County">Enter data for: Select a county</h2>} County</h2>
-                    {countyData}
-                </Wrapper>
-            );
         }
         ,
         [renderData]
@@ -172,25 +163,53 @@ const EntryForm = () => {
                     <article>
                         <h1 className="header">{clickedCountyData != null ? 'Enter data for: ' + clickedCountyData.name + ' County' :
                             'Enter data for: Select a county'}</h1>
+                        <br/>
                         <div className="top-half">
                             <form>
-                                <label>Species:</label>
-                                <input type="text" placeholder="Species Name" onChange={handleSpeciesChange}
-                                       value={species}/><br/>
-                                <label>Description:</label>
-                                <textarea placeholder="Description" style={{fontSize: "18px"}}
-                                          onChange={handleDescriptionChange}
-                                          value={description}/><br/>
-                                <label>Link: </label>
-                                <input type="text" placeholder="Link to more info" onChange={handleLinkChange}
-                                       value={link}/><br/>
-                                <label>Image: </label>
-                                <input type="text" placeholder="Image URL" onChange={handleImageChange}
-                                       value={image}/><br/>
+                                <div className="form-group row">
+                                    <label htmlFor="species" className="col-sm-3 col-form-label">Species:</label>
+                                    <div className="col-sm-9">
+                                        <input className="form-control" id="species" type="text"
+                                               placeholder="Species Name"
+                                               onChange={handleSpeciesChange}
+                                               value={species}/><br/>
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label htmlFor="description"
+                                           className="col-sm-3 col-form-label">Description:</label>
+                                    <div className="col-sm-9">
+                                    <textarea className="form-control" id="description" placeholder="Description"
+                                              style={{fontSize: "18px"}}
+                                              onChange={handleDescriptionChange}
+                                              value={description}/><br/>
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label htmlFor="link" className="col-sm-3 col-form-label">Link: </label>
+                                    <div className="col-sm-9">
+                                        <input className="form-control" id="link" type="text"
+                                               placeholder="Link to more info"
+                                               onChange={handleLinkChange}
+                                               value={link}/><br/>
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label htmlFor="image" className="col-sm-3 col-form-label">Image: </label>
+                                    <div className="col-sm-9">
+                                        <input className="form-control" id="image" type="text" placeholder="Image URL"
+                                               onChange={handleImageChange}
+                                               value={image}/><br/>
+                                    </div>
+                                </div>
                                 <img src={image} style={{height: "200px", width: "250px"}}
                                      alt="Preview"/><br/>
                             </form>
-                            <button onClick={postNewData} className="Button Success">Submit</button>
+                            {submitInProgress ? <button className="buttonload btn-success float-lg-right">
+                                    <i className="fa fa-circle-o-notch fa-spin"></i>Loading
+                                </button> :
+                                <button onClick={postNewData} className="Button Success float-lg-right">Submit</button>}
+
 
                         </div>
                     </article>
