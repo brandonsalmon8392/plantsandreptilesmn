@@ -5,12 +5,14 @@
 
 .info-card-text {
     font-size: 8px;
-    text-overflow: ellipsis;
+    height: 9vh;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-layout {
     display: flex;
+    height: 30vh;
     overflow: hidden;
     text-overflow: ellipsis;
     flex-direction: row;
@@ -37,6 +39,7 @@
 }
 
 .card-info {
+    color: white;
     padding: 30px;
     position: relative;
 }
@@ -56,6 +59,10 @@
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
     letter-spacing: 1px;
     font-size: 16px;
+}
+
+.card-modal {
+    background-color: #282c34;
 }
 
 .controlButton {

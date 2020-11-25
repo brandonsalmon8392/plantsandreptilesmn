@@ -30,6 +30,8 @@ const EntryForm = () => {
                     `;
 
     useLayoutEffect(() => {
+            am4core.disposeAllCharts();
+
             let chart = am4core.create("chartdiv", am4maps.MapChart);
             chart.homeZoomLevel = 4;
             chart.homeGeoPoint = {
@@ -152,7 +154,7 @@ const EntryForm = () => {
     );
 
     return (
-        <div className="App-header text-color position-absolute w-100">
+        <div className="App-header text-color w-100">
             <div id="container">
                 <div className="left-half">
                     <article>
@@ -164,7 +166,7 @@ const EntryForm = () => {
                         <h1 className="header">{clickedCountyData != null ? 'Enter data for: ' + clickedCountyData.name + ' County' :
                             'Enter data for: Select a county'}</h1>
                         <br/>
-                        <div className="top-half">
+                        <div className="top-half overflow-hidden">
                             <form>
                                 <div className="form-group row">
                                     <label htmlFor="species" className="col-sm-3 col-form-label">Species:</label>

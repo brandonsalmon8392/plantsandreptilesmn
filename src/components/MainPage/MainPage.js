@@ -23,7 +23,7 @@ const MainPage = (props) => {
                     `;
 
     useLayoutEffect(() => {
-            am4core.options.autoDispose = true;
+            am4core.disposeAllCharts();
 
             let chart = am4core.create("chartdiv", am4maps.MapChart);
             chart.homeZoomLevel = 4;
@@ -86,12 +86,12 @@ const MainPage = (props) => {
     }, [databaseResult]);
 
     return (
-        <div className="App-header position-absolute w-100">
+        <div className="App-header w-100">
             <h1 className="title">Interactive Map</h1>
             <div id="container">
                 <div className="left-half">
                     <article>
-                        <div id="chartdiv" style={{height: "50vh"}}/>
+                        <div id="chartdiv" style={{height: "70vh"}}/>
                     </article>
                 </div>
                 <div className="right-half" style={{height: "80vh"}}>

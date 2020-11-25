@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import './App.css';
-import {Route, Switch, __RouterContext} from 'react-router-dom'
+import {__RouterContext} from 'react-router'
+import {Route, Switch} from 'react-router-dom'
 import ProtectedRoute from "./components/ProtectedRouter";
 import {connect} from "react-redux";
 import {useTransition, animated} from "react-spring";
@@ -35,7 +36,7 @@ const App = (props) => {
                         <Switch location={item}>
                             <Route exact path="/" component={MainPage}/>
                             <Route exact path="/about" component={aboutPage}/>
-                            <ProtectedRoute
+                            <Route
                                 exact
                                 path="/add"
                                 component={EntryForm}
