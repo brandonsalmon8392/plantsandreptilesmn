@@ -1,4 +1,5 @@
 
-const ReptileCategories = ["Lizards", "Salamanders", "Snakes", "Tortoises", "Turtles"];
+export const ReptileCategories = ["Lizards", "Snakes", "Tortoises", "Turtles"];
 
-export default ReptileCategories;
+export const PlantCategories = ["Bushes", "Flowers", "Grasses", "Trees"];
+

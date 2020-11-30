@@ -1,6 +1,7 @@
 import React, {useEffect, useLayoutEffect, useState} from "react";
-import axios from "../../axios-database"
-import './EntryForm.css'
+import axios from "../../axios-database";
+import './EntryForm.css';
+import * as Constants from "../../resources/constants/Constants";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
@@ -9,16 +10,19 @@ import allActions from "../../actions";
 import InfoCard from "../UI/InfoCard/InfoCard";
 import ClipLoader from "react-spinners/ClipLoader";
 import {css} from "@emotion/react";
+import CardList from "../UI/CardList/CardList";
 
 const EntryForm = () => {
     const [clickedCountyData, setClickedCountyData] = useState(null);
     const [countyData, setCountyData] = useState(null);
     const [elementID, setElementID] = useState(null);
     const [species, setSpecies] = useState(null);
+    const [category, setCategory] = useState(null);
     const [scientificName, setScientificName] = useState(null);
     const [description, setDescription] = useState(null);
     const [link, setLink] = useState(null);
     const [image, setImage] = useState(null);
+    const [nativeCounties, setNativeCounties] = useState([]);
     const [submitInProgress, setSubmitInProgress] = useState(false);
 
     const dispatch = useDispatch();
@@ -46,15 +50,14 @@ const EntryForm = () => {
             let polygonTemplate = polygonSeries.mapPolygons.template;
             polygonTemplate.tooltipText = "{NAME}";
             polygonTemplate.fill = am4core.color("#74B266");
+            polygonTemplate.togglable = true;
             let hs = polygonTemplate.states.create("hover");
             hs.properties.fill = am4core.color("#367B25");
 
+            let as = polygonTemplate.states.create("active");
+            as.properties.fill = am4core.color("#367B25");
+
             polygonSeries.mapPolygons.template.events.on("hit", (event) => {
-                event.target.properties.fill = am4core.color("#367B25");
-                retrieveCountyData(event.target._dataItem.dataContext.name);
-                setCountyData(
-                    <ClipLoader color={"#74B266"} size={75} css={override}/>
-                );
                 setClickedCountyData({name: event.target._dataItem.dataContext.name});
             });
 
@@ -68,6 +71,10 @@ const EntryForm = () => {
 
     const handleSpeciesChange = (event) => {
         setSpecies(event.target.value);
+    };
+
+    const handleCategoryChange = (event) => {
+        setCategory(event.target.value);
     };
 
     const handleScientificNameChange = (event) => {
@@ -93,8 +100,10 @@ const EntryForm = () => {
         if (elementID) {
             dataurl += '/' + elementID;
             data = {
+                nativeCounties: nativeCounties,
                 countyData: {
                     species: species,
+                    category: category,
                     scientificName: scientificName,
                     description: description,
                     link: link,
@@ -104,10 +113,11 @@ const EntryForm = () => {
         } else {
             dataurl += '.json';
             data = {
-                countyID: clickedCountyData.name,
+                nativeCounties: nativeCounties,
                 countyData:
                     {
                         species: species,
+                        category: category,
                         scientificName: scientificName,
                         description: description,
                         link: link,
@@ -122,6 +132,8 @@ const EntryForm = () => {
     const editPost = (data) => {
         setElementID(data.elementID);
         setSpecies(data.species);
+        setCategory(data.category);
+        setScientificName(data.scientificName);
         setDescription(data.description);
         setLink(data.link);
         setImage(data.image);
@@ -136,18 +148,24 @@ const EntryForm = () => {
         }
     };
 
-
-    const retrieveCountyData = (id) => {
-        dispatch(allActions.mapActions.getCountyData(id));
-    };
+    useEffect(() => {
+        if(clickedCountyData) {
+            const county = clickedCountyData.name;
+            if (nativeCounties.includes(county)) {
+                setNativeCounties(nativeCounties.filter(nativeCounty => nativeCounty !== county));
+            } else {
+                setNativeCounties(nativeCounties => [...nativeCounties, county]);
+            }
+        }
+        }
+        ,[clickedCountyData]
+    )
 
     useEffect(() => {
             if (renderData) {
-                setCountyData(renderData.map(cardItem => {
-                    return (
-                        <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}} onEdit={editPost}
-                                  onDelete={removePost}/>)
-                }));
+                setCountyData(
+                    <CardList data={[...renderData]}/>
+                );
             }
             if (!renderData || renderData.length === 0) {
                 setCountyData(<div>
@@ -155,39 +173,68 @@ const EntryForm = () => {
                 </div>);
             }
 
-        }
-        ,
+        },
         [renderData]
     );
 
     return (
         <div className="App-header text-color w-100">
+            <h1 className="header ml-auto mr-auto">Enter Data</h1>
+
             <div id="container">
                 <div className="left-half">
-                    <article>
+                    <article className="top-half">
                         <div id="chartdiv" style={{height: "600px"}}/>
+                    </article>
+                    <article className="bottom-half text-color text-center">
+                        <h2>Selected Counties</h2>
+                        {nativeCounties.map(county => {
+                            return (
+                                    <h6>{county}<br/></h6>
+                            )
+                        })}
                     </article>
                 </div>
                 <div className="right-half">
                     <article>
-                        <h1 className="header">{clickedCountyData != null ? 'Enter data for: ' + clickedCountyData.name + ' County' :
-                            'Enter data for: Select a county'}</h1>
                         <br/>
                         <div className="top-half overflow-hidden">
                             <form>
                                 <div className="form-group row">
-                                <label htmlFor="species" className="col-sm-3 col-form-label">Species:</label>
-                                <div className="col-sm-9">
-                                    <input className="form-control" id="species" type="text"
-                                           placeholder="Species Name"
-                                           onChange={handleSpeciesChange}
-                                           value={species}/><br/>
-                                </div>
-                            </div>
-                                <div className="form-group row">
-                                    <label htmlFor="species" className="col-sm-3 col-form-label">Scientific Name:</label>
+                                    <label htmlFor="species"
+                                           className="col-sm-3 col-form-label display-1">Species:</label>
                                     <div className="col-sm-9">
-                                        <input className="form-control" id="species" type="text"
+                                        <input className="form-control-lg w-100" id="species" type="text"
+                                               placeholder="Species Name"
+                                               onChange={handleSpeciesChange}
+                                               value={species}/><br/>
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label htmlFor="category"
+                                           className="col-sm-3 col-form-label display-1">Category:</label>
+                                    <div className="col-sm-9">
+                                        <select id="category" className="col-sm-6 form-control-lg" value={category}
+                                                onChange={handleCategoryChange}>
+                                            <option value={undefined}>Select</option>
+                                            {Constants.ReptileCategories.map(category => {
+                                                return (
+                                                    <option value={category}>{category}</option>
+                                                );
+                                            })}
+                                            {Constants.PlantCategories.map(category => {
+                                                return (
+                                                    <option value={category}>{category}</option>
+                                                );
+                                            })}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-group row">
+                                    <label htmlFor="species" className="col-sm-3 col-form-label display-1">Scientific
+                                        Name:</label>
+                                    <div className="col-sm-9">
+                                        <input className="form-control-lg w-100" id="species" type="text"
                                                placeholder="Scientific Name"
                                                onChange={handleScientificNameChange}
                                                value={scientificName}/><br/>
@@ -195,27 +242,29 @@ const EntryForm = () => {
                                 </div>
                                 <div className="form-group row">
                                     <label htmlFor="description"
-                                           className="col-sm-3 col-form-label">Description:</label>
+                                           className="col-sm-3 col-form-label display-1">Description:</label>
                                     <div className="col-sm-9">
-                                    <textarea className="form-control" id="description" placeholder="Description"
+                                    <textarea className="form-control-lg w-100" id="description"
+                                              placeholder="Description"
                                               style={{fontSize: "18px"}}
                                               onChange={handleDescriptionChange}
                                               value={description}/><br/>
                                     </div>
                                 </div>
                                 <div className="form-group row">
-                                    <label htmlFor="link" className="col-sm-3 col-form-label">Link: </label>
+                                    <label htmlFor="link" className="col-sm-3 col-form-label display-1">Link: </label>
                                     <div className="col-sm-9">
-                                        <input className="form-control" id="link" type="text"
+                                        <input className="form-control-lg w-100" id="link" type="text"
                                                placeholder="Link to more info"
                                                onChange={handleLinkChange}
                                                value={link}/><br/>
                                     </div>
                                 </div>
                                 <div className="form-group row">
-                                    <label htmlFor="image" className="col-sm-3 col-form-label">Image: </label>
+                                    <label htmlFor="image" className="col-sm-3 col-form-label display-1">Image: </label>
                                     <div className="col-sm-9">
-                                        <input className="form-control" id="image" type="text" placeholder="Image URL"
+                                        <input className="form-control-lg w-100" id="image" type="text"
+                                               placeholder="Image URL"
                                                onChange={handleImageChange}
                                                value={image}/><br/>
                                     </div>
@@ -224,17 +273,14 @@ const EntryForm = () => {
                                      alt="Preview"/><br/>
                             </form>
                             {submitInProgress ?
-                                    <i className="fa fa-circle-o-notch fa-spin"></i>
+                                <i className="fa fa-circle-o-notch fa-spin"></i>
                                 :
                                 <button onClick={postNewData} className="Button Success float-lg-right">Submit</button>}
 
 
                         </div>
                     </article>
-                    <article className="bottom-half" style={{height: "600px"}}>
-                        <label className="text-color">Current Data:</label>
-                        {countyData}
-                    </article>
+
                 </div>
             </div>
         </div>

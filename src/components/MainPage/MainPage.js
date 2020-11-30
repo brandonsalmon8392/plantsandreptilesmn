@@ -66,7 +66,7 @@ const MainPage = (props) => {
         setClickedCountyData({name: id});
         dispatch(allActions.mapActions.getCountyData(id));
     };
-
+//asd
     useEffect(() => {
         if (databaseResult) {
             if (databaseResult.length === 0) {
@@ -75,11 +75,9 @@ const MainPage = (props) => {
                 </div>);
             }
             else {
-                console.log(databaseResult);
                 setCountyData(
                     <CardList data={[...databaseResult]}/>
                 );
-                console.log(databaseResult);
             }
         }
     }, [databaseResult]);

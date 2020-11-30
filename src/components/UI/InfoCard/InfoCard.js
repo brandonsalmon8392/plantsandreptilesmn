@@ -3,7 +3,6 @@ import classes from "./InfoCard.css";
 import Button from "react-bootstrap/Button";
 import {Modal} from "react-bootstrap";
 import {useSpring, animated} from 'react-spring'
-import ReptileCategories from "../../../resources/constants/Constants";
 
 //sadasss
 const InfoCard = (props) => {
@@ -14,10 +13,6 @@ const InfoCard = (props) => {
     };
 
     const prop = useSpring({opacity: 1, from: {opacity: 0}});
-
-    for (const category of ReptileCategories) {
-
-    }
 
     return (
         <animated.div style={prop} className="card-layout">
