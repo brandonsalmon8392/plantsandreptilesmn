@@ -3,7 +3,9 @@ import classes from "./InfoCard.css";
 import Button from "react-bootstrap/Button";
 import {Modal} from "react-bootstrap";
 import {useSpring, animated} from 'react-spring'
-//sadas
+import ReptileCategories from "../../../resources/constants/Constants";
+
+//sadasss
 const InfoCard = (props) => {
     const [displayModal, setDisplayModal] = useState(false);
 
@@ -12,6 +14,11 @@ const InfoCard = (props) => {
     };
 
     const prop = useSpring({opacity: 1, from: {opacity: 0}});
+
+    for (const category of ReptileCategories) {
+
+    }
+
     return (
         <animated.div style={prop} className="card-layout">
             {displayModal ?
@@ -22,6 +29,7 @@ const InfoCard = (props) => {
                             <div className="card-info">
                                 <div>
                                     <h4>{props.data.species}</h4>
+                                    <h6 className="font-italic">{props.data.scientificName}</h6>
                                     <p style={{
                                         height: "20%",
                                         textOverflow: "ellipsis",

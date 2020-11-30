@@ -4,7 +4,7 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/region/usa/mnHigh";
 import {useDispatch, useSelector} from "react-redux";
 import allActions from "../../actions/index"
-import InfoCard from "../UI/InfoCard/InfoCard";
+import CardList from "../UI/CardList/CardList";
 import classes from "./MainPage.css";
 import ClipLoader from "react-spinners/ClipLoader";
 import {css} from "@emotion/react";
@@ -75,12 +75,11 @@ const MainPage = (props) => {
                 </div>);
             }
             else {
+                console.log(databaseResult);
                 setCountyData(
-                    databaseResult.map(cardItem => {
-                        return (
-                            <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}}/>)
-                    })
+                    <CardList data={[...databaseResult]}/>
                 );
+                console.log(databaseResult);
             }
         }
     }, [databaseResult]);

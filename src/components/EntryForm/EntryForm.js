@@ -15,6 +15,7 @@ const EntryForm = () => {
     const [countyData, setCountyData] = useState(null);
     const [elementID, setElementID] = useState(null);
     const [species, setSpecies] = useState(null);
+    const [scientificName, setScientificName] = useState(null);
     const [description, setDescription] = useState(null);
     const [link, setLink] = useState(null);
     const [image, setImage] = useState(null);
@@ -69,6 +70,10 @@ const EntryForm = () => {
         setSpecies(event.target.value);
     };
 
+    const handleScientificNameChange = (event) => {
+        setScientificName(event.target.value);
+    };
+
     const handleDescriptionChange = (event) => {
         setDescription(event.target.value);
     };
@@ -90,6 +95,7 @@ const EntryForm = () => {
             data = {
                 countyData: {
                     species: species,
+                    scientificName: scientificName,
                     description: description,
                     link: link,
                     image: image
@@ -102,6 +108,7 @@ const EntryForm = () => {
                 countyData:
                     {
                         species: species,
+                        scientificName: scientificName,
                         description: description,
                         link: link,
                         image: image
@@ -169,12 +176,21 @@ const EntryForm = () => {
                         <div className="top-half overflow-hidden">
                             <form>
                                 <div className="form-group row">
-                                    <label htmlFor="species" className="col-sm-3 col-form-label">Species:</label>
+                                <label htmlFor="species" className="col-sm-3 col-form-label">Species:</label>
+                                <div className="col-sm-9">
+                                    <input className="form-control" id="species" type="text"
+                                           placeholder="Species Name"
+                                           onChange={handleSpeciesChange}
+                                           value={species}/><br/>
+                                </div>
+                            </div>
+                                <div className="form-group row">
+                                    <label htmlFor="species" className="col-sm-3 col-form-label">Scientific Name:</label>
                                     <div className="col-sm-9">
                                         <input className="form-control" id="species" type="text"
-                                               placeholder="Species Name"
-                                               onChange={handleSpeciesChange}
-                                               value={species}/><br/>
+                                               placeholder="Scientific Name"
+                                               onChange={handleScientificNameChange}
+                                               value={scientificName}/><br/>
                                     </div>
                                 </div>
                                 <div className="form-group row">
@@ -207,9 +223,9 @@ const EntryForm = () => {
                                 <img src={image} style={{height: "200px", width: "250px"}}
                                      alt="Preview"/><br/>
                             </form>
-                            {submitInProgress ? <button className="buttonload btn-success float-lg-right">
-                                    <i className="fa fa-circle-o-notch fa-spin"></i>Loading
-                                </button> :
+                            {submitInProgress ?
+                                    <i className="fa fa-circle-o-notch fa-spin"></i>
+                                :
                                 <button onClick={postNewData} className="Button Success float-lg-right">Submit</button>}
 
 
