@@ -184,7 +184,7 @@ const EntryForm = () => {
             <div id="container">
                 <div className="left-half">
                     <article className="top-half">
-                        <div id="chartdiv" style={{height: "600px"}}/>
+                        <div id="chartdiv" className="entry-map"/>
                     </article>
                     <article className="bottom-half text-color text-center">
                         <h2>Selected Counties</h2>
