@@ -45,6 +45,9 @@ a {
     font-weight: bold;
 }
 
+.entry-map{
+    height: 60vh;
+}
 .header {
     color: #74B266;
 }
