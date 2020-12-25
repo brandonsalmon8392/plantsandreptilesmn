@@ -1,10 +1,10 @@
 .cardImage {
     width: 20vw;
-    height: 15vw;
+    height: 100%;
 }
 
 .modalImage {
-    width: 75%;
+    width: 87%;
     height: 30%;
     margin: auto;
     display: block;
@@ -14,12 +14,15 @@
     font-size: 8px;
     height: 9vh;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
     text-overflow: ellipsis;
 }
 
 .card-layout {
     display: flex;
-    height: 30vh;
+    height: 15vw;
     overflow: hidden;
     text-overflow: ellipsis;
     flex-direction: row;

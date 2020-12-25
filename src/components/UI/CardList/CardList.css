@@ -1,0 +1,12 @@
+.CardList-Title {
+   color: #74B266;
+}
+
+.triggerClassName {
+   content: '\02795'; /* Unicode character for "plus" sign (+) */
+   color: #74B266;
+}
+
+.triggerOpenedClassName  {
+   content: "\2796"; /* Unicode character for "minus" sign (-) */
+}

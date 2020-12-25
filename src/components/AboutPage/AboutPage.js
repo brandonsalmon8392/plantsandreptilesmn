@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import Carousel from "../UI/Carousel/Carousel";
+import Slide from "react-reveal";
 import online_shopping from "../../resources/images/online_shopping.png";
 import solving_problems from "../../resources/images/solving_problems.png";
 import work_from_home from "../../resources/images/work_from_home.png";
@@ -13,26 +14,34 @@ const aboutPage = () => {
                 Minnesota</h1>
             <Carousel/>
             <div className="card-deck medium-padding" style={{marginTop: "15%"}}>
-                <div className="card text-center border-0" style={{backgroundColor: "#282c34"}}>
-                    <img className="card-img-top" src={solving_problems}/>
-                    <a href="https://mnherpsoc.org/mn-herps/" className="info-card-link text-decoration-none">Get
-                        involved with the
-                        Minnesota
-                        Herpetological
-                        Society </a><br/>
-                </div>
-                <div className="card text-center border-0" style={{backgroundColor: "#282c34"}}>
-                    <img className="card-img-top" src={work_from_home}/>
-                    <a href="https://www.dnr.state.mn.us/nr/index.html" className="info-card-link text-decoration-none">Learn
-                        more about
-                        Minnesota
-                        regulations</a><br/>
-                </div>
-                <div className="card text-center border-0" style={{backgroundColor: "#282c34"}}>
-                    <img className="card-img-top" src={online_shopping}/>
-                    <a href="https://www.prairiemoon.com/" className="info-card-link text-decoration-none">Shop local
-                        plants</a>
-                </div>
+                <Slide left>
+                    <div className="card text-center border-0" style={{backgroundColor: "#282c34"}}>
+                        <img className="card-img-top" src={solving_problems}/>
+                        <a href="https://mnherpsoc.org/mn-herps/" className="info-card-link text-decoration-none">Get
+                            involved with the
+                            Minnesota
+                            Herpetological
+                            Society </a><br/>
+                    </div>
+                </Slide>
+                <Slide bottom>
+                    <div className="card text-center border-0" style={{backgroundColor: "#282c34"}}>
+                        <img className="card-img-top" src={work_from_home}/>
+                        <a href="https://www.dnr.state.mn.us/nr/index.html"
+                           className="info-card-link text-decoration-none">Learn
+                            more about
+                            Minnesota
+                            regulations</a><br/>
+                    </div>
+                </Slide>
+                <Slide right>
+                    <div className="card text-center border-0" style={{backgroundColor: "#282c34"}}>
+                        <img className="card-img-top" src={online_shopping}/>
+                        <a href="https://www.prairiemoon.com/" className="info-card-link text-decoration-none">Shop
+                            local
+                            plants</a>
+                    </div>
+                </Slide>
             </div>
             <br/><br/><br/>
             <div className="row medium-padding">

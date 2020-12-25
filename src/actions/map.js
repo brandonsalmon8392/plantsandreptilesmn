@@ -35,7 +35,8 @@ export const getMap = () => dispatch => {
 export const getCountyData = (countyId) => dispatch => {
     axios.get('https://reptile-mn.firebaseio.com/counties.json',  { crossdomain: true }).then(response => {
         let dataArray = Object.entries(response.data);
-        let renderData = dataArray.filter(element => element[1].countyID === countyId);
+        let renderData = dataArray.filter(element =>
+            (element[1].nativeCounties && element[1].nativeCounties.includes(countyId)) || element[1].countyID === countyId);
 
         dispatch(requestCountyData(renderData));
     });
