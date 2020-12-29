@@ -11,10 +11,10 @@ import InfoCard from "../UI/InfoCard/InfoCard";
 import ClipLoader from "react-spinners/ClipLoader";
 import {css} from "@emotion/react";
 import CardList from "../UI/CardList/CardList";
+import {Redirect} from "react-router";
 
-const EntryForm = () => {
+const EntryForm = (props) => {
     const [clickedCountyData, setClickedCountyData] = useState(null);
-    const [countyData, setCountyData] = useState(null);
     const [elementID, setElementID] = useState(null);
     const [species, setSpecies] = useState(null);
     const [category, setCategory] = useState(null);
@@ -25,9 +25,21 @@ const EntryForm = () => {
     const [nativeCounties, setNativeCounties] = useState([]);
     const [submitInProgress, setSubmitInProgress] = useState(false);
 
+    if(props.data != null) {
+        setElementID(props.data.elementID);
+        setSpecies(props.data.species);
+        setCategory(props.data.category);
+        setScientificName(props.data.scientificName);
+        setDescription(props.data.description);
+        setLink(props.data.link);
+        setImage(props.data.image);
+        setNativeCounties([]);
+    }
+
     const dispatch = useDispatch();
 
     const renderData = useSelector(state => state.map.countyData);
+    let isAuth = useSelector(state => state.auth.isAuthenticated);
 
     const override = css`
                       display: block;
@@ -161,22 +173,9 @@ const EntryForm = () => {
         ,[clickedCountyData]
     )
 
-    useEffect(() => {
-            if (renderData) {
-                setCountyData(
-                    <CardList data={[...renderData]}/>
-                );
-            }
-            if (!renderData || renderData.length === 0) {
-                setCountyData(<div>
-                    <p>No data here yet!</p>
-                </div>);
-            }
-
-        },
-        [renderData]
-    );
-
+    if(!isAuth) {
+        return (<Redirect to="/login"/>)
+    }
     return (
         <div className="App-header text-color w-100">
             <h1 className="header ml-auto mr-auto">Enter Data</h1>

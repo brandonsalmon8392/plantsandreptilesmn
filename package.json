@@ -19,6 +19,7 @@
     "react-bootstrap": "^1.4.0",
     "react-collapsible": "^2.8.1",
     "react-dom": "^16.14.0",
+    "react-media": "^1.10.0",
     "react-modal": "^3.12.1",
     "react-redux": "^7.2.2",
     "react-responsive-carousel": "^3.2.10",

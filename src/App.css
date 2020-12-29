@@ -1,12 +1,11 @@
 html {
   background-color: #282c34
 }
+body {
+  padding-top: 56px;
+}
 .App {
   text-align: center;
-}
-
-#container {
-
 }
 
 .App-logo {

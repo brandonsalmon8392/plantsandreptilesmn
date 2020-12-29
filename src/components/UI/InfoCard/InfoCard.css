@@ -9,7 +9,9 @@
     margin: auto;
     display: block;
 }
-
+@media screen and (max-width: 975px) {
+    #info-card-text {display: none}
+}
 .info-card-text {
     font-size: 8px;
     height: 9vh;
@@ -65,11 +67,11 @@
 
 .card-btn {
     border: 0;
-    float: bottom;
+    margin: auto;
     border-radius: 50px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
     letter-spacing: 1px;
-    font-size: 16px;
+    font-size: .75rem;
 }
 
 .card-modal {

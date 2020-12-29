@@ -11,6 +11,7 @@ import Wrapper from "./hoc/Wrapper";
 import MainPage from './components/MainPage/MainPage';
 import EntryForm from './components/EntryForm/EntryForm'
 import aboutPage from './components/AboutPage/AboutPage'
+import MasterList from "./components/MasterList/MasterList";
 import Login from "./components/login"
 
 const App = (props) => {
@@ -44,7 +45,7 @@ const App = (props) => {
                                 isVerifying={isVerifying}
                             />
                             <Route path="/login" component={Login}/>
-                            {/*<Route exact path="/login" component={Auth}/>*/}
+                            <Route path="/masterlist" component={MasterList}/>
                         </Switch>
                     </animated.div>
                 ))}

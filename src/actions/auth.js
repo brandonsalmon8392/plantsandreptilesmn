@@ -100,5 +100,6 @@ export const verifyAuth = () => dispatch => {
 
 export default {
     loginUser,
+    logoutUser,
     verifyAuth
 }

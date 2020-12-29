@@ -13,17 +13,13 @@ import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
 
 const styles = () => ({
-    "@global": {
-        body: {
-            backgroundColor: "#fff"
-        }
-    },
     paper: {
         marginTop: 100,
         display: "flex",
         padding: 20,
         flexDirection: "column",
-        alignItems: "center"
+        alignItems: "center",
+        margin: "auto"
     },
     avatar: {
         marginLeft: "auto",
@@ -64,7 +60,7 @@ class Login extends Component {
             return <Redirect to="/add" />;
         } else {
             return (
-                <div className="position-absolute w-100">
+                <div className="App-header w-100">
                 <Container component="main" style={{width: "50%"}}>
                     <Paper className={classes.paper}>
                         <Avatar className={classes.avatar}>

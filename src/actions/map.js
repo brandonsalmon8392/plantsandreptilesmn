@@ -7,6 +7,7 @@ import am4geodata_region_usaCountiesHigh from "@amcharts/amcharts4-geodata/regio
 export const CREATE_MAP = "CREATE_MAP";
 export const REQUEST_COUNTY_DATA = "REQUEST_COUNTY_DATA";
 export const REMOVE_COUNTY_DATA = "REMOVE_COUNTY_DATA";
+export const GET_ALL_SPECIES = "GET_ALL_SPECIES";
 
 
 const createMap = () => {
@@ -28,8 +29,27 @@ const deleteCountyData = () => {
   }
 };
 
+const requestAllSpecies = data => {
+    return {
+        type: GET_ALL_SPECIES,
+        payload: data
+    };
+};
+
 export const getMap = () => dispatch => {
     dispatch(createMap());
+};
+
+export const getAllSpecies = () => dispatch => {
+    axios.get('https://reptile-mn.firebaseio.com/counties.json',  { crossdomain: true }).then(response => {
+        let dataArray = Object.entries(response.data);
+
+        let result = {
+            data: dataArray
+        };
+
+        dispatch(requestAllSpecies(result));
+    });
 };
 
 export const getCountyData = (countyId) => dispatch => {
@@ -38,14 +58,18 @@ export const getCountyData = (countyId) => dispatch => {
         let renderData = dataArray.filter(element =>
             (element[1].nativeCounties && element[1].nativeCounties.includes(countyId)) || element[1].countyID === countyId);
 
-        dispatch(requestCountyData(renderData));
+        let result = { countyId: countyId,
+            data: renderData
+        };
+
+        dispatch(requestCountyData(result));
     });
 };
 
 export const removeCountyData = (data) => dispatch => {
     if (window.confirm("Are you sure?")) {
         console.log("Post Deleted");
-        let dataurl = 'https://reptile-mn.firebaseio.com/counties/' + data.elementID;
+        let dataurl = 'https://reptile-mn.firebaseio.com/counties/' + data.elementID + '.json';
         axios.delete(dataurl, { headers: {
                 'Access-Control-Allow-Origin': '*',
             } }).then(dispatch(deleteCountyData()));
@@ -54,5 +78,7 @@ export const removeCountyData = (data) => dispatch => {
 
 export default {
     createMap,
-    getCountyData
+    getCountyData,
+    getAllSpecies,
+    removeCountyData
 }

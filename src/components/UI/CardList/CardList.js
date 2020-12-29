@@ -6,7 +6,7 @@ import classes from "./CardList.css";
 
 const CardList = (props) => {
     const list = [];
-
+    console.log(props.data)
     //Reptiles
     for (const Category of Constants.ReptileCategories) {
         const CategoryResult = props.data.filter(Species => Species[1].countyData.category === Category);
@@ -56,7 +56,9 @@ const CardList = (props) => {
                                      key={item.category}>
                     {item.species.map(cardItem => {
                         return (
-                            <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}} key={cardItem[0]}/>
+                            <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}} key={cardItem[0]}
+                                onEdit={props.onEdit} onDelete={props.onDelete}
+                            />
                         )
                     })}
                 </Collapsible>)
