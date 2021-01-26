@@ -12,7 +12,7 @@ const CardList = (props) => {
         const CategoryResult = props.data.filter(Species => Species[1].countyData.category === Category);
 
         const ListItem = {
-            category: Category,
+            categoryName: Category,
             species: CategoryResult
         };
 
@@ -26,7 +26,7 @@ const CardList = (props) => {
         const CategoryResult = props.data.filter(Species => Species[1].countyData.category === Category);
 
         const ListItem = {
-            category: Category,
+            categoryName: Category,
             species: CategoryResult
         };
 
@@ -39,7 +39,7 @@ const CardList = (props) => {
     const CategoryResult = props.data.filter(Species => Species[1].countyData.category === undefined);
 
     const ListItem = {
-        category: "No Category",
+        categoryName: "No Category",
         species: CategoryResult
     };
 
@@ -49,14 +49,14 @@ const CardList = (props) => {
 
     return (
         <div>
-            {list.map(item => {
+            {list.map(category => {
                 return (<Collapsible className="CardList-Title" openedClassName="CardList-Title"
-                                     trigger={item.category + '  +'} triggerWhenOpen={item.category + '  -'} open={true}
+                                     trigger={category.categoryName + '  +'} triggerWhenOpen={category.categoryName + '  -'} open={true}
                                      transitionTime={300}
-                                     key={item.category}>
-                    {item.species.map(cardItem => {
+                                     key={category.categoryName}>
+                    {category.species.map(species => {
                         return (
-                            <InfoCard data={{elementID: cardItem[0], ...cardItem[1].countyData}} key={cardItem[0]}
+                            <InfoCard data={{elementID: species[0], ...species[1].countyData}} key={species[0]}
                                 onEdit={props.onEdit} onDelete={props.onDelete}
                             />
                         )

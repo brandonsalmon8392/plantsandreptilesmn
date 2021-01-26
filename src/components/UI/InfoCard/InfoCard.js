@@ -5,14 +5,12 @@ import Media from "react-media";
 import {Modal} from "react-bootstrap";
 import {useSpring, animated} from 'react-spring'
 
-//sadasss
 const InfoCard = (props) => {
     const [displayModal, setDisplayModal] = useState(false);
 
     const toggleModal = () => {
         setDisplayModal(!displayModal);
     };
-
     const prop = useSpring({opacity: 1, from: {opacity: 0}});
 
     return (

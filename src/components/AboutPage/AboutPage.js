@@ -9,7 +9,7 @@ import classes from './AboutPage.css';
 
 const aboutPage = () => {
     return (
-        <div className="App-header container">
+        <div className="App-header container col-xl-11">
             <h1 style={{margin: "0 auto", color: "#74B266", marginBottom: "34px"}}>Help Preserve the Wildlife of
                 Minnesota</h1>
             <Carousel/>
@@ -43,7 +43,7 @@ const aboutPage = () => {
                     </div>
                 </Slide>
             </div>
-            <br/><br/><br/>
+            <div className="col-xs-12" style={{height:"40vh"}}/>
             <div className="row medium-padding">
                 <div className="col-lg-6 m-auto">
                     <h1>What you can do</h1>
@@ -54,7 +54,7 @@ const aboutPage = () => {
                 </div>
                 <img className="col-lg-6" src={bench}/>
             </div>
-            <br/><br/><br/>
+            <div className="col-xs-12" style={{height:"30vh"}}/>
             <div className="row mb-4 medium-padding">
                 <p className="col-md-8 text-sm-left call-to-action-text">By participating and making your voice heard
                     you can help conserve and
