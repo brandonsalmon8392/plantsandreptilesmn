@@ -78,7 +78,7 @@ const MainPage = (props) => {
         if (databaseResult) {
             if (databaseResult.data.length === 0) {
                 setCountyData(<div>
-                    <p>No data here yet!</p>
+                    <p style={{color: "white"}}>No data here yet!</p>
                 </div>);
             } else {
                 setCountyData(
