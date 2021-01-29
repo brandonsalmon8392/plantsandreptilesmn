@@ -18,6 +18,8 @@ const InfoCard = (props) => {
             {displayModal ?
                 <Modal show={displayModal} onHide={toggleModal}>
                         <div className="modal-body card-modal" style={{backgroundColor: "#282c34"}}>
+                            <button className="close text-white" onClick={toggleModal}>&times;</button>
+
                             <img className="modalImage" src={props.data.image} placeholder="Image"/>
 
                             <div className="card-info">

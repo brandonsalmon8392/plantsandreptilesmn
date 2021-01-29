@@ -101,6 +101,7 @@ const MainPage = (props) => {
                                 </article>
                                 {displayModal ? <Modal show={displayModal} onHide={toggleModal}>
                                     <article style={{backgroundColor: "#282c34"}}>
+                                        <button className="close text-white" onClick={toggleModal}>&times;</button>
                                         <h2 className="County">{databaseResult != null && databaseResult.countyId != null ? databaseResult.countyId + ' County' :
                                             <h2 className="County">Select a county to see it's native
                                                 species!</h2>}</h2>

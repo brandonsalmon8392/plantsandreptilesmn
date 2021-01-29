@@ -35,11 +35,13 @@ const NavBar = () => {
                 }
             </div>
                 {isAuth ?
+                    <Wrapper className="nav-item nav-link">
                     <div>
-                    <p className="nav-item nav-link border-0 p-0 m-0" style={{color: "#f4f5ec"}}>Logged in as {user.email}</p>
-                        <Button className="controlButton nav-item nav-link border-0 p-0 m-0" variant="danger" onClick={logOutUser}
-                        >Log Out</Button>
+                    <p className="border-0 p-0 m-0" style={{color: "#f4f5ec"}}>Logged in as {user.email}</p>
                     </div>
+                        <Button className="border-0 p-1 m-0 ml-4" variant="danger" onClick={logOutUser}
+                        >Log Out</Button>
+                    </Wrapper>
                     : <NavLink exact to="/login" className="nav-item nav-link" activeClassName="nav-item nav-link active" style={{color: "#f4f5ec", marginLeft:"auto", marginBottom:"0"}}>Login</NavLink>
                 }
             </div>

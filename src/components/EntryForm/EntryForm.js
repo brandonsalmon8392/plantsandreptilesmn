@@ -160,18 +160,18 @@ const EntryForm = (props) => {
         }
     };
 
-    useEffect(() => {
-        if(clickedCountyData) {
-            const county = clickedCountyData.name;
-            if (nativeCounties.includes(county)) {
-                setNativeCounties(nativeCounties.filter(nativeCounty => nativeCounty !== county));
-            } else {
-                setNativeCounties(nativeCounties => [...nativeCounties, county]);
-            }
-        }
-        }
-        ,[clickedCountyData]
-    )
+    // useEffect(() => {
+    //     if(clickedCountyData) {
+    //         const county = clickedCountyData.name;
+    //         if (nativeCounties.includes(county)) {
+    //             setNativeCounties(nativeCounties.filter(nativeCounty => nativeCounty !== county));
+    //         } else {
+    //             setNativeCounties(nativeCounties => [...nativeCounties, county]);
+    //         }
+    //     }
+    //     }
+    //     ,[clickedCountyData]
+    // )
 
     if(!isAuth) {
         return (<Redirect to="/login"/>)

@@ -6,17 +6,15 @@ import {Modal} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import {animated} from "react-spring";
 import EntryForm from "../EntryForm/EntryForm";
+import EntryFormModal from "../EntryForm/EntryFormModal";
 
 const MasterList = (props) => {
     const dispatch = useDispatch();
     let databaseResult = useSelector(state => state.map.masterList);
     let isAuth = useSelector(state => state.auth.isAuthenticated);
-    const [displayModal, setDisplayModal] = useState(true);
     const [modal, setModal] = useState(null);
 
-    const toggleModal = () => {
-        setDisplayModal(!displayModal);
-    };
+
     useEffect(() => {
         dispatch(allActions.mapActions.getAllSpecies())
     },
@@ -25,15 +23,7 @@ const MasterList = (props) => {
     const onEdit = (elementData) => {
         console.log(databaseResult)
         console.log(elementData)
-        setModal(displayModal ?
-                <Modal show={displayModal} onHide={toggleModal}>
-                    <div className="modal-body card-modal" style={{backgroundColor: "#282c34"}}>
-                        <EntryForm data={elementData}/>
-                    </div>
-                </Modal>
-                :
-                null
-        )
+        return setModal(<EntryFormModal display={true} data={elementData}/>);
     };
 
     const onDelete = (elementData) => {
